@@ -1,25 +1,31 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Keyword;
 use App\Models\KeywordLibrary;
 use App\Models\Title;
 use App\Models\TitleLibrary;
-use App\Services\GeoEngine\Engine;
-use App\Services\GeoEngine\GeoScorer;
+use App\Services\GeoFlow\Engine;
+use App\Support\AdminWeb;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 /**
- * 放置：项目根 /app/Http/Controllers/GeoEngineController.php
- * 纯新增。引擎页 + 闭环入库 + GEO 内容评分。
+ * 选词引擎（多行业核心词 → 问题集群 / GEO 标题）。
+ * 原生后台页：/geo_admin/geo-engine（admin.geo-engine.*），受 admin.auth 保护。
  */
 class GeoEngineController extends Controller
 {
     public function index()
     {
-        return view('geoengine.generate', ['packs' => Engine::packs()]);
+        return view('admin.geo-engine.index', [
+            'pageTitle' => '选词引擎',
+            'activeMenu' => 'geo_engine',
+            'adminSiteName' => AdminWeb::siteName(),
+            'packs' => Engine::packs(),
+        ]);
     }
 
     public function generate(Request $request)
@@ -40,7 +46,6 @@ class GeoEngineController extends Controller
         }
     }
 
-    /** 闭环：把引擎产出一键写入 GEOFlow 的 标题库 / 关键词库 */
     public function saveToLibrary(Request $request)
     {
         $data = $request->validate([
@@ -80,7 +85,7 @@ class GeoEngineController extends Controller
                 });
 
                 return response()->json([
-                    'ok' => true, 'target' => 'title', 'library_id' => $libId, 'count' => $n,
+                    'ok' => true, 'count' => $n,
                     'url' => route('admin.title-libraries.index'),
                     'message' => "已写入标题库「{$name}」，共 {$n} 条标题",
                 ]);
@@ -105,28 +110,12 @@ class GeoEngineController extends Controller
             });
 
             return response()->json([
-                'ok' => true, 'target' => 'keyword', 'library_id' => $libId, 'count' => $n,
+                'ok' => true, 'count' => $n,
                 'url' => route('admin.keyword-libraries.index'),
                 'message' => "已写入关键词库「{$name}」，共 {$n} 条",
             ]);
         } catch (\Throwable $e) {
             return response()->json(['ok' => false, 'error' => $e->getMessage()], 422);
         }
-    }
-
-    /** GEO 内容评分页 */
-    public function scorePage()
-    {
-        return view('geoengine.score');
-    }
-
-    public function score(Request $request)
-    {
-        $data = $request->validate([
-            'content' => 'required|string|max:50000',
-            'keyword' => 'nullable|string|max:60',
-        ]);
-
-        return response()->json(['ok' => true] + GeoScorer::score($data['content'], $data['keyword'] ?? ''));
     }
 }

@@ -49,9 +49,14 @@
 
     // Beacon 分组（仅重排展示，不动路由）；标题随语言切换
     $gfuiEn = app()->getLocale() === 'en';
+    // GEO SaaS 扩展模块（原生 admin.* 路由，纳入官方 $menu，自动高亮）
+    $menu['geo_engine'] = ['route' => 'admin.geo-engine.index', 'name' => $gfuiEn ? 'Topic Engine' : '选词引擎'];
+    $menu['ranking_tracker'] = ['route' => 'admin.ranking-tracker.index', 'name' => $gfuiEn ? 'Ranking Tracker' : '排名追踪'];
+    $menu['geo_score'] = ['route' => 'admin.geo-score.index', 'name' => $gfuiEn ? 'Content Score' : '内容评分'];
     $groups = [
         ['label' => $gfuiEn ? 'Overview' : '概览', 'items' => ['dashboard', 'analytics']],
         ['label' => $gfuiEn ? 'Content' : '内容', 'items' => ['tasks', 'articles', 'distribution']],
+        ['label' => $gfuiEn ? 'GEO Tools' : 'GEO 工具', 'items' => ['geo_engine', 'ranking_tracker', 'geo_score']],
         ['label' => $gfuiEn ? 'Assets' : '素材', 'items' => ['materials']],
         ['label' => $gfuiEn ? 'System' : '系统', 'items' => ['ai_config', 'site_settings', 'admin_users'], 'adv' => true],
     ];
@@ -59,6 +64,7 @@
         'dashboard' => 'layout-grid', 'analytics' => 'bar-chart-3', 'tasks' => 'list-checks',
         'articles' => 'file-text', 'distribution' => 'send', 'materials' => 'folder-open',
         'ai_config' => 'cpu', 'site_settings' => 'settings', 'admin_users' => 'users',
+        'geo_engine' => 'sparkles', 'ranking_tracker' => 'target', 'geo_score' => 'gauge',
     ];
     $advItems = ['distribution']; // 简单模式额外隐藏的进阶项
 @endphp
@@ -80,10 +86,6 @@
                 @endforeach
             @endif
         @endforeach
-        <div class="gfui-group">{{ $gfuiEn ? 'GEO Tools' : 'GEO 工具' }}</div>
-        <a href="/geo-engine" class="gfui-item"><i data-lucide="sparkles"></i><span>{{ $gfuiEn ? 'Topic Engine' : '选词引擎' }}</span></a>
-        <a href="/ranking-tracker" class="gfui-item"><i data-lucide="target"></i><span>{{ $gfuiEn ? 'Ranking Tracker' : '排名追踪' }}</span></a>
-        <a href="/geo-score" class="gfui-item"><i data-lucide="gauge"></i><span>{{ $gfuiEn ? 'Content Score' : '内容评分' }}</span></a>
     </nav>
     <div class="gfui-sb-foot">
         <div class="gfui-up">

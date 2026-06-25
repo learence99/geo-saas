@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\GeoEngine;
+namespace App\Services\GeoFlow;
 
 /**
  * GEO 内容评分器（规则版，自包含）。

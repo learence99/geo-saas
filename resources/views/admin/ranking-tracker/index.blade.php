@@ -93,7 +93,7 @@ $('add').addEventListener('click', async () => {
   const prompt = $('prompt').value.trim(); if(!prompt){ showMsg('请输入要追踪的问题', false); return; }
   $('add').disabled = true;
   try {
-    const res = await fetch('/ranking-tracker/add', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':tok(),'Accept':'application/json'},
+    const res = await fetch('{{ route('admin.ranking-tracker.add') }}', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':tok(),'Accept':'application/json'},
       body: JSON.stringify({ subject:$('subject').value.trim(), prompt:prompt, engine:$('engine').value }) });
     const d = await res.json();
     if(d.ok){ location.reload(); } else { showMsg('添加失败：'+(d.error||''), false); }
@@ -102,7 +102,7 @@ $('add').addEventListener('click', async () => {
 async function checkRow(tr){
   const id = tr.dataset.id; const btn = tr.querySelector('.checkOne'); btn.disabled = true; btn.textContent='检查中…';
   try {
-    const res = await fetch('/ranking-tracker/check', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':tok(),'Accept':'application/json'}, body: JSON.stringify({ id: parseInt(id,10) }) });
+    const res = await fetch('{{ route('admin.ranking-tracker.check') }}', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':tok(),'Accept':'application/json'}, body: JSON.stringify({ id: parseInt(id,10) }) });
     const d = await res.json();
     if(!d.ok){ showMsg('检查失败：'+(d.error||''), false); return; }
     tr.querySelector('.c-cited').innerHTML = '<span class="pill '+(d.is_cited?'green':'gray')+'">'+(d.is_cited?'已引用':'未引用')+'</span>';
