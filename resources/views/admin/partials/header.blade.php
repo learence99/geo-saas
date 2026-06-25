@@ -80,6 +80,10 @@
                 @endforeach
             @endif
         @endforeach
+        <div class="gfui-group">{{ $gfuiEn ? 'GEO Tools' : 'GEO 工具' }}</div>
+        <a href="/geo-engine" class="gfui-item"><i data-lucide="sparkles"></i><span>{{ $gfuiEn ? 'Topic Engine' : '选词引擎' }}</span></a>
+        <a href="/ranking-tracker" class="gfui-item"><i data-lucide="target"></i><span>{{ $gfuiEn ? 'Ranking Tracker' : '排名追踪' }}</span></a>
+        <a href="/geo-score" class="gfui-item"><i data-lucide="gauge"></i><span>{{ $gfuiEn ? 'Content Score' : '内容评分' }}</span></a>
     </nav>
     <div class="gfui-sb-foot">
         <div class="gfui-up">
