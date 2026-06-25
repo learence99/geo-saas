@@ -83,6 +83,14 @@ input[type=range]{width:140px}
     <div class="banner" id="banner"></div>
   </div>
 
+  <div id="savebar" style="display:none;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:12px 16px;margin-top:14px;flex-wrap:wrap">
+    <span style="font-size:13px;color:var(--ink-2);font-weight:600">一键入库：</span>
+    <input type="text" id="libname" placeholder="库名（留空自动用核心词）" style="flex:1;min-width:180px;height:34px;border:1px solid var(--line);border-radius:8px;padding:0 11px;font-size:13px">
+    <button class="btn" id="saveTitle" style="background:var(--blue-600);border-color:var(--blue-600);color:#fff">写入标题库</button>
+    <button class="btn" id="saveKw">写入关键词库</button>
+    <a href="/geo-score" target="_blank" class="btn" style="text-decoration:none">GEO 内容评分 →</a>
+  </div>
+
   <div id="out"></div>
 </div>
 
@@ -93,6 +101,7 @@ $('count').addEventListener('input', e => $('cv').textContent = e.target.value);
 $('go').addEventListener('click', async () => {
   const btn = $('go'); btn.disabled = true;
   $('out').innerHTML = ''; $('banner').style.display = 'none'; $('routed').textContent = '';
+  $('savebar').style.display = 'none';
   $('spin').style.display = 'block';
   try {
     const res = await fetch('/geo-engine/generate', {
@@ -122,6 +131,8 @@ $('go').addEventListener('click', async () => {
 function showBanner(kind, text){ const b = $('banner'); b.className = 'banner ' + kind; b.textContent = text; b.style.display = 'block'; }
 
 function render(data){
+  window.lastResult = data;
+  $('savebar').style.display = 'flex';
   $('routed').textContent = '行业包：' + data.pack_name + ' · 路由策略：' + data.routedType + ' · 主体：' + data.subject;
   const rep = data.report;
   const failCount = Object.keys(rep.itemErrors || {}).length + (rep.batchErrors || []).length;
@@ -154,6 +165,27 @@ function render(data){
     });
   });
 }
+
+async function saveLib(target){
+  if (!window.lastResult || !window.lastResult.items) { showBanner('err', '请先生成内容'); return; }
+  const items = window.lastResult.items.map(it => ({ text: it.text, merchantVersion: it.merchantVersion }));
+  const b1 = $('saveTitle'), b2 = $('saveKw'); b1.disabled = b2.disabled = true;
+  try {
+    const res = await fetch('/geo-engine/save-to-library', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content, 'Accept': 'application/json' },
+      body: JSON.stringify({ keyword: window.lastResult.keyword, target: target, name: $('libname').value.trim(), items: items })
+    });
+    const data = await res.json();
+    if (!data.ok) { showBanner('err', '入库失败：' + (data.error || '')); return; }
+    const b = $('banner'); b.className = 'banner ok';
+    b.innerHTML = data.message + ' &nbsp;<a href="' + data.url + '" target="_blank" style="color:var(--pos);text-decoration:underline">去查看 →</a>';
+    b.style.display = 'block';
+  } catch (err) { showBanner('err', '请求出错：' + err.message); }
+  finally { b1.disabled = b2.disabled = false; }
+}
+$('saveTitle').addEventListener('click', () => saveLib('title'));
+$('saveKw').addEventListener('click', () => saveLib('keyword'));
 
 function esc(s){ const d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
 </script>
