@@ -93,8 +93,8 @@ class KeywordAiGenerationService
         $out = [];
         foreach (preg_split('/\R/u', $content) ?: [] as $line) {
             $kw = preg_replace('/^\d+[\.\)\-、\s]*/u', '', trim($line));
-            $kw = trim((string) $kw);
-            $kw = trim($kw, "\"'「」【】[]（）()· \t");
+            // UTF-8 安全地去掉首尾的引号/括号/中点/空白（不能用 trim 的字符掩码，会按字节切断中文）
+            $kw = (string) preg_replace('/^[\s"\'「」【】\[\]（）()·]+|[\s"\'「」【】\[\]（）()·]+$/u', '', (string) $kw);
             if ($kw === '' || mb_strlen($kw, 'UTF-8') > 40) {
                 continue;
             }
