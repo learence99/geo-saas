@@ -50,13 +50,13 @@
     // Beacon 分组（仅重排展示，不动路由）；标题随语言切换
     $gfuiEn = app()->getLocale() === 'en';
     // GEO SaaS 扩展模块（原生 admin.* 路由，纳入官方 $menu，自动高亮）
-    $menu['geo_engine'] = ['route' => 'admin.geo-engine.index', 'name' => $gfuiEn ? 'Topic Engine' : '选词引擎'];
+    // 注：选词引擎已"下沉"到原生素材库（关键词库·AI扩词 + 标题库·AI生成标题），不再单列菜单。
     $menu['ranking_tracker'] = ['route' => 'admin.ranking-tracker.index', 'name' => $gfuiEn ? 'Ranking Tracker' : '排名追踪'];
     $menu['geo_score'] = ['route' => 'admin.geo-score.index', 'name' => $gfuiEn ? 'Content Score' : '内容评分'];
     $groups = [
         ['label' => $gfuiEn ? 'Overview' : '概览', 'items' => ['dashboard', 'analytics']],
         ['label' => $gfuiEn ? 'Content' : '内容', 'items' => ['tasks', 'articles', 'distribution']],
-        ['label' => $gfuiEn ? 'Assets' : '素材', 'items' => ['materials', 'geo_engine']],
+        ['label' => $gfuiEn ? 'Assets' : '素材', 'items' => ['materials']],
         ['label' => $gfuiEn ? 'GEO Intelligence' : 'GEO 情报', 'items' => ['ranking_tracker', 'geo_score']],
         ['label' => $gfuiEn ? 'System' : '系统', 'items' => ['ai_config', 'site_settings', 'admin_users'], 'adv' => true],
     ];

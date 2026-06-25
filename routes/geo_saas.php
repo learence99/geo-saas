@@ -4,8 +4,15 @@
 // 放置：routes/geo_saas.php  → 实际 URL 形如 /geo_admin/geo-engine，路由名 admin.geo-engine.index
 use App\Http\Controllers\Admin\GeoEngineController;
 use App\Http\Controllers\Admin\GeoScoreController;
+use App\Http\Controllers\Admin\KeywordExpandController;
 use App\Http\Controllers\Admin\RankingTrackerController;
 use Illuminate\Support\Facades\Route;
+
+// 关键词库 · AI 扩词（焊进原生关键词库；入口在原生详情页按钮）
+Route::prefix('keyword-libraries/{libraryId}')->name('keyword-libraries.')->group(function () {
+    Route::get('ai-expand', [KeywordExpandController::class, 'form'])->name('ai-expand');
+    Route::post('ai-expand', [KeywordExpandController::class, 'submit'])->name('ai-expand.submit');
+});
 
 Route::prefix('geo-engine')->name('geo-engine.')->group(function () {
     Route::get('/', [GeoEngineController::class, 'index'])->name('index');
