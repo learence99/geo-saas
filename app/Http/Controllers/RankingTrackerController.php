@@ -41,6 +41,8 @@ class RankingTrackerController extends Controller
         }
 
         return view('geoengine.rankings', [
+            'pageTitle' => 'AI 排名追踪',
+            'activeMenu' => '',
             'rows' => $rows,
             'engines' => VisibilityCollector::engines(),
             'metrics' => [
