@@ -4,7 +4,7 @@
 @section('content')
 <div class="gft">
   <h1>选词引擎 <span class="pill blue" style="vertical-align:middle">多行业</span></h1>
-  <p class="sub">输入核心词 → 按用户决策旅程自动生成问题集群与 GEO 标题。换行业包即换行业，引擎不变。</p>
+  <p class="sub">输入核心词 → AI 自动生成问题集群与 GEO 标题，一键入库到素材库（标题库 / 关键词库）。换行业包即换行业。</p>
 
   <div class="card" style="margin-top:14px">
     <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
@@ -22,10 +22,13 @@
   </div>
 
   <div id="savebar" style="display:none;align-items:center;gap:10px;background:var(--c-surface);border:1px solid var(--c-line);border-radius:14px;padding:12px 16px;margin-bottom:16px;flex-wrap:wrap">
-    <span style="font-size:13px;color:var(--c-ink2);font-weight:600">一键入库：</span>
-    <input type="text" id="libname" placeholder="库名（留空自动用核心词）" style="flex:1;min-width:180px">
-    <button class="gbtn pri" id="saveTitle">写入标题库</button>
-    <button class="gbtn" id="saveKw">写入关键词库</button>
+    <span style="font-size:13px;color:var(--c-ink2);font-weight:600">入库到素材库：</span>
+    <select id="saveType"><option value="title">标题库</option><option value="keyword">关键词库</option></select>
+    <label class="rad"><input type="radio" name="smode" value="new" checked> 新建库</label>
+    <input type="text" id="libname" placeholder="库名（留空用核心词）" style="flex:1;min-width:140px">
+    <label class="rad"><input type="radio" name="smode" value="append"> 追加到</label>
+    <select id="libsel" disabled style="min-width:150px"></select>
+    <button class="gbtn pri" id="saveBtn">入库</button>
     <a href="{{ route('admin.geo-score.index') }}" class="gbtn" style="text-decoration:none">GEO 内容评分 →</a>
   </div>
 
@@ -49,6 +52,8 @@
 .gft .gbtn.pri{background:var(--c-blue);border-color:var(--c-blue);color:#fff}
 .gft .gbtn.org{background:var(--c-org);border-color:var(--c-org);color:#fff}
 .gft .gbtn:disabled{opacity:.5}
+.gft .rad{font-size:13px;color:var(--c-ink2);display:inline-flex;align-items:center;gap:4px;cursor:pointer}
+.gft select:disabled,.gft input:disabled{opacity:.45;background:#f7f8fb}
 .gft .meta{font-size:12px;color:var(--c-ink3);margin-top:8px}
 .gft .spin{font-size:13px;color:var(--c-ink3);margin-top:10px}
 .gft .banner{padding:11px 14px;border-radius:8px;font-size:13px;font-weight:500;margin-top:12px;display:none}
@@ -116,21 +121,36 @@ function render(data){
   });
 }
 
-async function saveLib(target){
+const LIBS = @json(['title' => $titleLibraries, 'keyword' => $keywordLibraries]);
+function fillLibSel(){
+  const list = LIBS[$('saveType').value] || [];
+  $('libsel').innerHTML = list.length
+    ? list.map(l=>'<option value="'+l.id+'">'+esc(l.name)+'</option>').join('')
+    : '<option value="">（暂无已有库）</option>';
+}
+function curMode(){ return document.querySelector('input[name=smode]:checked').value; }
+function syncMode(){ const ap = curMode()==='append'; $('libsel').disabled=!ap; $('libname').disabled=ap; }
+$('saveType').addEventListener('change', fillLibSel);
+document.querySelectorAll('input[name=smode]').forEach(r=>r.addEventListener('change', syncMode));
+fillLibSel(); syncMode();
+
+async function saveLib(){
   if(!window.lastResult || !window.lastResult.items){ showBanner('err','请先生成内容'); return; }
+  const mode = curMode();
+  if(mode==='append' && !$('libsel').value){ showBanner('err','请选择要追加的库（该类型暂无库时请先用"新建库"）'); return; }
   const items = window.lastResult.items.map(it=>({text:it.text, merchantVersion:it.merchantVersion}));
-  const b1=$('saveTitle'), b2=$('saveKw'); b1.disabled=b2.disabled=true;
+  const btn=$('saveBtn'); btn.disabled=true;
   try {
     const res = await fetch('{{ route('admin.geo-engine.save') }}', { method:'POST',
       headers:{'Content-Type':'application/json','X-CSRF-TOKEN':tok(),'Accept':'application/json'},
-      body: JSON.stringify({ keyword:window.lastResult.keyword, target:target, name:$('libname').value.trim(), items:items }) });
+      body: JSON.stringify({ keyword:window.lastResult.keyword, target:$('saveType').value, mode:mode,
+        name:$('libname').value.trim(), library_id: mode==='append'?parseInt($('libsel').value,10):null, items:items }) });
     const data = await res.json();
     if(!data.ok){ showBanner('err','入库失败：'+(data.error||'')); return; }
     showBanner('ok', data.message+' &nbsp;<a href="'+data.url+'" style="color:var(--c-pos);text-decoration:underline">去查看 →</a>');
-  } catch(err){ showBanner('err','请求出错：'+err.message); } finally { b1.disabled=b2.disabled=false; }
+  } catch(err){ showBanner('err','请求出错：'+err.message); } finally { btn.disabled=false; }
 }
-$('saveTitle').addEventListener('click', ()=>saveLib('title'));
-$('saveKw').addEventListener('click', ()=>saveLib('keyword'));
+$('saveBtn').addEventListener('click', saveLib);
 })();
 </script>
 @endpush

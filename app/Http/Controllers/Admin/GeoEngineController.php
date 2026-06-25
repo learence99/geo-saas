@@ -13,7 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 /**
- * 选词引擎（多行业核心词 → 问题集群 / GEO 标题）。
+ * 选词引擎 = 素材库的「AI 智能生成」入口。
+ * 核心词 → 问题集群 / GEO 标题，再"新建库"或"追加到已有库"，喂进素材库。
  * 原生后台页：/geo_admin/geo-engine（admin.geo-engine.*），受 admin.auth 保护。
  */
 class GeoEngineController extends Controller
@@ -25,6 +26,8 @@ class GeoEngineController extends Controller
             'activeMenu' => 'geo_engine',
             'adminSiteName' => AdminWeb::siteName(),
             'packs' => Engine::packs(),
+            'titleLibraries' => TitleLibrary::query()->orderByDesc('id')->get(['id', 'name']),
+            'keywordLibraries' => KeywordLibrary::query()->orderByDesc('id')->get(['id', 'name']),
         ]);
     }
 
@@ -46,29 +49,42 @@ class GeoEngineController extends Controller
         }
     }
 
+    /**
+     * 入库：新建库或追加到已有库（标题库 / 关键词库）。
+     */
     public function saveToLibrary(Request $request)
     {
         $data = $request->validate([
             'keyword' => 'required|string|max:50',
             'target' => 'required|in:title,keyword',
+            'mode' => 'required|in:new,append',
             'name' => 'nullable|string|max:80',
+            'library_id' => 'nullable|integer',
             'items' => 'required|array|min:1',
             'items.*.text' => 'required|string',
             'items.*.merchantVersion' => 'required|string',
         ]);
 
-        $name = trim((string) ($data['name'] ?? '')) ?: ($data['keyword'] . ' · 引擎生成');
-        $desc = '由 GEO 引擎从核心词「' . $data['keyword'] . '」生成';
+        if ($data['mode'] === 'append' && empty($data['library_id'])) {
+            return response()->json(['ok' => false, 'error' => '请选择要追加的库'], 422);
+        }
+
+        $isTitle = $data['target'] === 'title';
         $items = $data['items'];
+        $newName = trim((string) ($data['name'] ?? '')) ?: ($data['keyword'] . ' · 引擎生成');
+        $desc = '由 GEO 引擎从核心词「' . $data['keyword'] . '」生成';
 
         try {
-            if ($data['target'] === 'title') {
-                [$libId, $n] = DB::transaction(function () use ($name, $desc, $items) {
-                    $lib = TitleLibrary::query()->create([
-                        'name' => $name, 'description' => $desc, 'title_count' => 0,
-                        'generation_type' => 'ai', 'generation_rounds' => 1, 'is_ai_generated' => 1,
-                    ]);
-                    $n = 0; $seen = [];
+            $result = DB::transaction(function () use ($data, $isTitle, $items, $newName, $desc) {
+                if ($isTitle) {
+                    $lib = $data['mode'] === 'append'
+                        ? TitleLibrary::query()->findOrFail($data['library_id'])
+                        : TitleLibrary::query()->create([
+                            'name' => $newName, 'description' => $desc, 'title_count' => 0,
+                            'generation_type' => 'ai', 'generation_rounds' => 1, 'is_ai_generated' => 1,
+                        ]);
+                    $seen = array_flip(Title::query()->where('library_id', $lib->id)->pluck('title')->all());
+                    $n = 0;
                     foreach ($items as $it) {
                         $title = trim((string) $it['merchantVersion']);
                         if ($title === '' || isset($seen[$title])) { continue; }
@@ -80,22 +96,18 @@ class GeoEngineController extends Controller
                         ]);
                         $n++;
                     }
-                    $lib->update(['title_count' => $n]);
-                    return [$lib->id, $n];
-                });
+                    $lib->update(['title_count' => Title::query()->where('library_id', $lib->id)->count()]);
 
-                return response()->json([
-                    'ok' => true, 'count' => $n,
-                    'url' => route('admin.title-libraries.index'),
-                    'message' => "已写入标题库「{$name}」，共 {$n} 条标题",
-                ]);
-            }
+                    return ['name' => $lib->name, 'n' => $n, 'url' => route('admin.title-libraries.index'), 'label' => '标题库'];
+                }
 
-            [$libId, $n] = DB::transaction(function () use ($name, $desc, $items) {
-                $lib = KeywordLibrary::query()->create([
-                    'name' => $name, 'description' => $desc, 'keyword_count' => 0,
-                ]);
-                $n = 0; $seen = [];
+                $lib = $data['mode'] === 'append'
+                    ? KeywordLibrary::query()->findOrFail($data['library_id'])
+                    : KeywordLibrary::query()->create([
+                        'name' => $newName, 'description' => $desc, 'keyword_count' => 0,
+                    ]);
+                $seen = array_flip(Keyword::query()->where('library_id', $lib->id)->pluck('keyword')->all());
+                $n = 0;
                 foreach ($items as $it) {
                     $kw = trim((string) $it['text']);
                     if ($kw === '' || isset($seen[$kw])) { continue; }
@@ -105,14 +117,16 @@ class GeoEngineController extends Controller
                     ]);
                     $n++;
                 }
-                $lib->update(['keyword_count' => $n]);
-                return [$lib->id, $n];
+                $lib->update(['keyword_count' => Keyword::query()->where('library_id', $lib->id)->count()]);
+
+                return ['name' => $lib->name, 'n' => $n, 'url' => route('admin.keyword-libraries.index'), 'label' => '关键词库'];
             });
 
+            $verb = $data['mode'] === 'append' ? '追加到' : '写入';
+
             return response()->json([
-                'ok' => true, 'count' => $n,
-                'url' => route('admin.keyword-libraries.index'),
-                'message' => "已写入关键词库「{$name}」，共 {$n} 条",
+                'ok' => true, 'count' => $result['n'], 'url' => $result['url'],
+                'message' => "已{$verb}{$result['label']}「{$result['name']}」，新增 {$result['n']} 条",
             ]);
         } catch (\Throwable $e) {
             return response()->json(['ok' => false, 'error' => $e->getMessage()], 422);

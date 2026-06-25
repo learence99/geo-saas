@@ -56,8 +56,8 @@
     $groups = [
         ['label' => $gfuiEn ? 'Overview' : '概览', 'items' => ['dashboard', 'analytics']],
         ['label' => $gfuiEn ? 'Content' : '内容', 'items' => ['tasks', 'articles', 'distribution']],
-        ['label' => $gfuiEn ? 'GEO Tools' : 'GEO 工具', 'items' => ['geo_engine', 'ranking_tracker', 'geo_score']],
-        ['label' => $gfuiEn ? 'Assets' : '素材', 'items' => ['materials']],
+        ['label' => $gfuiEn ? 'Assets' : '素材', 'items' => ['materials', 'geo_engine']],
+        ['label' => $gfuiEn ? 'GEO Intelligence' : 'GEO 情报', 'items' => ['ranking_tracker', 'geo_score']],
         ['label' => $gfuiEn ? 'System' : '系统', 'items' => ['ai_config', 'site_settings', 'admin_users'], 'adv' => true],
     ];
     $icons = [
