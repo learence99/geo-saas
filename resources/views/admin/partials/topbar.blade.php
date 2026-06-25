@@ -17,12 +17,13 @@
     $notificationGithubUrl = (string) ($updateLinks['github'] ?? 'https://github.com/yaojingang/GEOFlow');
     $notificationUpdateCenterUrl = $isUpdateCenterEnabled && $isSuperAdmin ? \App\Support\AdminWeb::routePath('admin.system-updates.index') : '';
     $notificationStatus = (string) ($updateState['status'] ?? 'disabled');
+    $gfuiEn = app()->getLocale() === 'en';
 @endphp
 <header class="gfui-tb">
     <div class="gfui-crumb">{{ $pageTitle ?? '' }}</div>
     <div class="gfui-tb-r">
-        <span class="gfui-mode" id="gfui-mode" title="简单 / 专家模式">
-            <span data-mode="simple">简单</span><span data-mode="expert" class="on">专家</span>
+        <span class="gfui-mode" id="gfui-mode" title="{{ $gfuiEn ? 'Simple / Expert mode' : '简单 / 专家模式' }}">
+            <span data-mode="simple">{{ $gfuiEn ? 'Simple' : '简单' }}</span><span data-mode="expert" class="on">{{ $gfuiEn ? 'Expert' : '专家' }}</span>
         </span>
 
         <div class="relative">

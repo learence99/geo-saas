@@ -47,12 +47,13 @@
         $resolvedActive = $subMap[$routeName];
     }
 
-    // Beacon 分组（仅重排展示，不动路由）
+    // Beacon 分组（仅重排展示，不动路由）；标题随语言切换
+    $gfuiEn = app()->getLocale() === 'en';
     $groups = [
-        ['label' => '概览', 'items' => ['dashboard', 'analytics']],
-        ['label' => '内容', 'items' => ['tasks', 'articles', 'distribution']],
-        ['label' => '素材', 'items' => ['materials']],
-        ['label' => '系统', 'items' => ['ai_config', 'site_settings', 'admin_users'], 'adv' => true],
+        ['label' => $gfuiEn ? 'Overview' : '概览', 'items' => ['dashboard', 'analytics']],
+        ['label' => $gfuiEn ? 'Content' : '内容', 'items' => ['tasks', 'articles', 'distribution']],
+        ['label' => $gfuiEn ? 'Assets' : '素材', 'items' => ['materials']],
+        ['label' => $gfuiEn ? 'System' : '系统', 'items' => ['ai_config', 'site_settings', 'admin_users'], 'adv' => true],
     ];
     $icons = [
         'dashboard' => 'layout-grid', 'analytics' => 'bar-chart-3', 'tasks' => 'list-checks',
@@ -64,7 +65,7 @@
 <aside class="gfui-sb">
     <a href="{{ route('admin.dashboard') }}" class="gfui-logo">
         <span class="gfui-mark"></span>
-        <span class="gfui-name">GEO SAAS<small>AI 推荐增长引擎</small></span>
+        <span class="gfui-name">GEO SAAS<small>{{ $gfuiEn ? 'AI Growth Engine' : 'AI 推荐增长引擎' }}</small></span>
     </a>
     <nav class="gfui-nav">
         @foreach ($groups as $g)
