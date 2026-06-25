@@ -64,7 +64,7 @@
 <aside class="gfui-sb">
     <a href="{{ route('admin.dashboard') }}" class="gfui-logo">
         <span class="gfui-mark"></span>
-        <span class="gfui-name">{{ $adminBrandName }}<small>GEO 内容增长</small></span>
+        <span class="gfui-name">GEO SAAS<small>AI 推荐增长引擎</small></span>
     </a>
     <nav class="gfui-nav">
         @foreach ($groups as $g)
