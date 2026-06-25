@@ -41,6 +41,64 @@ class KeywordExpandController extends Controller
         ]);
     }
 
+    /**
+     * 创建页「用 AI 生成并创建」：建库 + 生成 + 写入，一步完成。
+     */
+    public function createWithAi(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:80'],
+            'core' => ['required', 'string', 'max:50'],
+            'pack' => ['nullable', 'string'],
+            'subject' => ['nullable', 'string', 'max:60'],
+            'count' => ['required', 'integer', 'min:1', 'max:50'],
+            'ai_model_id' => ['required', 'integer'],
+        ]);
+
+        $aiModel = AiModel::query()
+            ->whereKey((int) $data['ai_model_id'])
+            ->where('status', 'active')
+            ->whereRaw("COALESCE(NULLIF(model_type, ''), 'chat') = 'chat'")
+            ->firstOrFail();
+
+        $library = KeywordLibrary::query()->create([
+            'name' => trim((string) $data['name']),
+            'description' => '由 AI 扩词从核心词「' . $data['core'] . '」生成',
+            'keyword_count' => 0,
+        ]);
+
+        $result = $this->service->generate(
+            $aiModel,
+            trim((string) $data['core']),
+            (int) $data['count'],
+            (string) ($data['pack'] ?? ''),
+            trim((string) ($data['subject'] ?? ''))
+        );
+
+        $saved = 0;
+        foreach ($result['keywords'] as $kw) {
+            $kw = trim((string) $kw);
+            if ($kw === '') {
+                continue;
+            }
+            Keyword::query()->firstOrCreate(
+                ['library_id' => $library->id, 'keyword' => $kw],
+                ['used_count' => 0, 'usage_count' => 0]
+            );
+            $saved++;
+        }
+        $library->update(['keyword_count' => Keyword::query()->where('library_id', $library->id)->count()]);
+
+        $msg = "已创建关键词库「{$library->name}」并 AI 生成 {$saved} 个关键词";
+        if (($result['fallback_used'] ?? false) === true) {
+            $msg .= '（AI 服务不可用，已用模板兜底）';
+        }
+
+        return redirect()
+            ->route('admin.keyword-libraries.detail', ['libraryId' => $library->id])
+            ->with('message', $msg);
+    }
+
     public function submit(Request $request, int $libraryId): RedirectResponse
     {
         $library = KeywordLibrary::query()->whereKey($libraryId)->firstOrFail();

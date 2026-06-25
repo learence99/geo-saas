@@ -13,6 +13,8 @@ Route::prefix('keyword-libraries/{libraryId}')->name('keyword-libraries.')->grou
     Route::get('ai-expand', [KeywordExpandController::class, 'form'])->name('ai-expand');
     Route::post('ai-expand', [KeywordExpandController::class, 'submit'])->name('ai-expand.submit');
 });
+// 关键词库 · 用 AI 生成并创建（创建页卡片：一步建库+填词）
+Route::post('keyword-libraries/ai-new', [KeywordExpandController::class, 'createWithAi'])->name('keyword-libraries.ai-new');
 
 Route::prefix('geo-engine')->name('geo-engine.')->group(function () {
     Route::get('/', [GeoEngineController::class, 'index'])->name('index');
