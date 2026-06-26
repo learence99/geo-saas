@@ -4,9 +4,19 @@
 @php $gjFmtViews = function ($v) { $v = (int) $v; return $v >= 10000 ? round($v / 10000, 1) . '万' : $v; }; @endphp
 
 <div class="gj-cathead">
-    <span class="gj-pill" style="background:#2c4a63;color:#fff">分类</span>
-    <h1>{{ $category->name }}</h1>
-    @if(trim((string) $category->description) !== '')<p>{{ $category->description }}</p>@endif
+    <div class="gj-cathead-top">
+        <div>
+            <span class="gj-pill" style="background:#2c4a63;color:#fff">分类</span>
+            <h1>{{ $category->name }}</h1>
+            <div class="sub">{{ $articles->total() }} 篇文章 · 实时更新</div>
+            @if(trim((string) $category->description) !== '')<p>{{ $category->description }}</p>@endif
+        </div>
+        <div class="gj-filter">
+            <a class="on" href="{{ route('site.category', $category->slug) }}">最新</a>
+            <a href="{{ route('site.category', $category->slug) }}?sort=hot">最热</a>
+            <a href="{{ route('site.category', $category->slug) }}?sort=featured">精选</a>
+        </div>
+    </div>
 </div>
 
 @if($articles->isEmpty())
