@@ -18,6 +18,20 @@
 - **控制器**：标题生成的 `pack`/`subject` 经 `request()` 兜底读取，**未改** `TitleLibraryController`。
 - **侧栏**：`resources/views/admin/partials/header.blade.php` 是我们整体重皮的版本（Beacon），已属我们维护范畴。
 
+## 白标（去 GEOFlow 品牌）
+商用给客户前要去掉一切暴露底层 GEOFlow 的痕迹。分两类处理：
+
+**A. 我们自有文件里直接去掉（零覆盖原生）**
+- `resources/views/admin/layouts/app.blade.php`：删掉 `@include('admin.partials.welcome-modal')` —— 原生"版本更新/欢迎"弹窗不再引入。
+- `resources/views/admin/partials/topbar.blade.php`：删掉整个"通知铃铛"（里面是版本更新提示 + changelog + `github.com/yaojingang/GEOFlow` + 系统更新中心，全是漏点）。
+- `.env`：`GEOFLOW_UPDATE_CHECK_ENABLED=false` —— `isEnabled()` 转 false，后台不再请求 GitHub、不再算版本。
+
+**B. 部署期脚本批处理原生文件（`whitelabel.sh`，每次 cp 之后跑）**
+- 移除原生 `dashboard.blade.php` 的"技能资源"作者推广 section（3 个 yaojingang 外链卡片）。
+- `lang/**` 与 `resources/views/admin/**` 里 `GeoFlow/GEOFlow → 品牌名`、`姚金刚 → 品牌名`、作者外链 → `#`。
+- 保护命名空间 `\GeoFlow`、env `GEOFLOW_`、配置键 `geoflow.`（大小写区分，命中不到，不会坏功能）。
+- 幂等，可反复执行。**原生文件被 cp 重新覆盖后必须重跑**，否则品牌痕迹回来。
+
 ## 行业策略的唯一来源
 所有"行业不同的 prompt / 词表 / 阈值 / 合规"集中在 `config/geo_packs.php`。
 加行业 = 加一个 slug；调 prompt = 改这个文件——**不碰原生代码**。
