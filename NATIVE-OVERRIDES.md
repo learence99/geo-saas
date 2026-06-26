@@ -13,8 +13,10 @@
 | `resources/views/admin/keyword-libraries/form.blade.php` | 创建模式下在表单上方增加「用 AI 生成并创建」卡片（建库+填词一步，POST 到 `admin.keyword-libraries.ai-new`）；编辑模式与原生一致 | 创建库时就能 AI 生成内容，免去"先建空库再填" | 看上游是否改了 form，把 `@if(!$isEdit)` 的 AI 卡片重新贴回 |
 | `resources/views/admin/materials/index.blade.php` | 把「关键词库管理」「标题库管理」两张卡片 `href` 改为 `admin.keyword-workbench.index` / `admin.title-workbench.index`（指向自有工作台）；其余原样（2 行改动） | 统一关键词/标题入口到自有功能模块,原生那套退为内部管道 | 看上游是否改了卡片数组,把这 2 行 href 重新改过来 |
 
+| `bootstrap/providers.php` | 在原生 2 个 Provider 之外**追加** `GeoSaasServiceProvider::class`（注册我们的后台路由）。由 addon 托管整个文件，cp 即恢复，免手动补行 | Laravel 注册 Provider 的唯一入口；以前手动改、升级会丢 | 看上游是否在此**新增了 Provider**，把新增的同步进我们这份（目前上游为 AppServiceProvider + HorizonServiceProvider） |
+
 ## 没有改的（用更稳的方式接入）
-- **路由/鉴权**：用 `app/Providers/GeoSaasServiceProvider.php` 注入，不改 `routes/web.php`。
+- **路由**：自有后台页用 `GeoSaasServiceProvider` 注入 `routes/geo_saas.php`，不改原生 `routes/web.php`。
 - **控制器**：标题生成的 `pack`/`subject` 经 `request()` 兜底读取，**未改** `TitleLibraryController`。
 - **侧栏**：`resources/views/admin/partials/header.blade.php` 是我们整体重皮的版本（Beacon），已属我们维护范畴。
 
