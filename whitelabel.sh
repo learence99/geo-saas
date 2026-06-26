@@ -38,8 +38,10 @@ while IFS= read -r -d '' f; do
   perl -i -pe '
     BEGIN { our $b = $ENV{"WL_BRAND"}; }
     # ③ 作者外链先处理（否则品牌替换会把 URL 里的 GEOFlow 也换掉，留下半截）
-    s{https?://(?:x\.com|twitter\.com)/yaojingang\S*}{#}g;
-    s{https?://github\.com/yaojingang/\S*}{#}g;
+    #    注意：用受限字符集匹配 URL 路径，遇到引号/逗号/空格/尖括号即停，
+    #    否则 \S* 会贪婪吃掉闭合引号和逗号，导致 PHP 语法错误。
+    s{https?://(?:x\.com|twitter\.com)/yaojingang[A-Za-z0-9._/\-]*}{#}g;
+    s{https?://github\.com/yaojingang/[A-Za-z0-9._/\-]*}{#}g;
     s/姚金刚/$b/g;
     # ② 品牌：GeoFlow（保护命名空间）、GEOFlow → 品牌名
     s/(?<!\\)GeoFlow/$b/g;
