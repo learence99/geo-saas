@@ -3,7 +3,7 @@
   --bg:#f4f1ea; --card:#fff; --ink:#23252a; --ink2:#3a3d44; --muted:#6b6f78; --subtle:#9a9488;
   --terra:#c8742b; --terra-d:#a85f1f; --line:#e6e1d6; --soft:#efeae0;
   --navy:#2c4a63; --plum:#5e3f5e; --brown:#7a5836; --wine:#6e3a44; --sage:#356b54;
-  --serif:'Noto Serif SC',serif; --sans:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  --serif:'Noto Serif SC','Source Han Serif SC','Songti SC',STSong,'SimSun',serif; --sans:-apple-system,'Noto Sans SC','PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;
   background:var(--bg); color:var(--ink); font-family:var(--sans); line-height:1.7;
   -webkit-font-smoothing:antialiased; margin:0;
 }

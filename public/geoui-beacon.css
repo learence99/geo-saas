@@ -3,7 +3,7 @@
    放置：项目根 /public/geoui-beacon.css
    由 admin/layouts/app.blade.php 在 <head> 注入。纯样式，不改任何逻辑。
    ============================================================ */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+/* 字体改用系统字体栈，避免国内访问 Google Fonts 导致浏览器一直转/加载慢 */
 
 :root{
   --bk-blue-700:#2a52b5;--bk-blue-600:#3568d4;--bk-blue-500:#5285ea;--bk-blue-100:#d7e5fb;--bk-blue-50:#eef4fe;
@@ -14,9 +14,9 @@
 }
 
 /* ---------- 皮：全局基调（字体 / 背景 / 主色） ---------- */
-body{font-family:'Plus Jakarta Sans','Instrument Sans',system-ui,sans-serif!important;color:var(--bk-ink);}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Segoe UI',system-ui,sans-serif!important;color:var(--bk-ink);}
 body.bg-gray-50,.bg-gray-50{background-color:var(--bk-bg)!important;}
-.font-mono,.tabular-nums{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;}
+.font-mono,.tabular-nums{font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-variant-numeric:tabular-nums;}
 
 /* 把 GEOFlow 用到的蓝色系统一替换成 Beacon 蓝（重着色，安全） */
 .text-blue-600,.text-blue-700{color:var(--bk-blue-600)!important;}
