@@ -115,7 +115,11 @@
 .gj-empty{background:#fff;border:1px solid var(--line);border-radius:16px;padding:48px 20px;text-align:center;color:var(--muted)}
 .gj-empty h3{font-family:var(--serif);color:var(--ink);font-size:20px;margin-bottom:8px}
 .gj-page{margin-top:30px;display:flex;justify-content:center}
-.gj-page nav span,.gj-page nav a,.gj-page [role=navigation] a,.gj-page [role=navigation] span{font-family:var(--sans)}
+.gj-page .hidden{display:none}
+.gj-page [role=navigation]{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.gj-page a,.gj-page [role=navigation] span{font-family:var(--sans);padding:8px 13px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink2);font-size:13px;line-height:1;text-decoration:none}
+.gj-page a:hover{border-color:var(--terra);color:var(--terra-d)}
+.gj-page [aria-current] span{background:var(--navy);color:#fff;border-color:var(--navy)}
 .gj-page svg{display:none}
 
 /* footer */

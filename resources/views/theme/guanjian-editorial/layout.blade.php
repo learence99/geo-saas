@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @include('site.partials.seo-head')
     @stack('head')
-    {{-- 字体改用系统中文字体（衬线走 宋体/思源宋体），避免国内访问 Google Fonts 卡顿 --}}
-    <script src="{{ asset('js/tailwindcss.play-cdn.js') }}"></script>
+    {{-- 系统中文字体；本主题样式自包含(theme.css)，不加载 Tailwind play-cdn(去掉 407KB 运行时引擎与其警告) --}}
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('themes/guanjian-editorial/theme.css') }}">
     @if(!empty($headAnalyticsCode))
