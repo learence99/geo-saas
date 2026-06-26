@@ -42,7 +42,7 @@
         @include('admin.partials.footer')
     </div>
 </div>
-@include('admin.partials.welcome-modal')
+{{-- 白标:不引入原生"版本更新/欢迎"弹窗(暴露 GEOFlow 底层)。另在 .env 设 GEOFLOW_UPDATE_CHECK_ENABLED=false 关掉后台检查。 --}}
 @vite('resources/js/app.js')
 @stack('scripts')
 {{-- 重新渲染侧栏新增的 lucide 图标 --}}
