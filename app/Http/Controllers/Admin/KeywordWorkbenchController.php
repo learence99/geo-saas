@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Keyword;
 use App\Models\KeywordLibrary;
+use App\Models\Title;
+use App\Models\TitleLibrary;
 use App\Services\GeoFlow\KeywordWorkbenchService;
+use App\Services\GeoFlow\TitleDistillService;
 use App\Support\AdminWeb;
 use Illuminate\Http\Request;
 
@@ -16,7 +19,10 @@ use Illuminate\Http\Request;
  */
 class KeywordWorkbenchController extends Controller
 {
-    public function __construct(private readonly KeywordWorkbenchService $service) {}
+    public function __construct(
+        private readonly KeywordWorkbenchService $service,
+        private readonly TitleDistillService $distill,
+    ) {}
 
     public function index(Request $request)
     {
@@ -154,14 +160,59 @@ class KeywordWorkbenchController extends Controller
         return redirect()->route('admin.keyword-workbench.index')->with('message', '关键词已保存');
     }
 
-    public function markTitled(Request $request)
+    /**
+     * 蒸馏:关键词 → 母标题(入对应核心词的标题库,带血缘 + 回写关键词状态)。
+     */
+    public function distillTitle(Request $request)
     {
         $data = $request->validate(['id' => ['required', 'integer']]);
         $kw = Keyword::query()->find($data['id']);
-        if ($kw) {
-            $kw->forceFill(['status' => '已生成标题'])->save();
+        if (! $kw) {
+            return response()->json(['ok' => false, 'error' => '关键词不存在'], 404);
         }
 
-        return response()->json(['ok' => true]);
+        $result = $this->distill->generate($kw, (string) AdminWeb::siteName());
+        if (! ($result['ok'] ?? false)) {
+            return response()->json(['ok' => false, 'error' => $result['error'] ?? '生成失败'], 422);
+        }
+
+        // 标题库与关键词库一一对应(绑 keyword_library_id)
+        $kwLib = KeywordLibrary::query()->find($kw->library_id);
+        $libName = ($kw->core_word !== null && $kw->core_word !== '') ? ($kw->core_word . ' · 标题') : (($kwLib->name ?? '母标题库') . ' · 标题');
+        $titleLib = TitleLibrary::query()->firstOrCreate(
+            ['keyword_library_id' => $kw->library_id],
+            ['name' => $libName, 'description' => '蒸馏自关键词库:' . ($kwLib->name ?? ''), 'title_count' => 0, 'generation_type' => 'ai', 'is_ai_generated' => 1]
+        );
+
+        // 同一关键词已蒸馏过则不重复
+        $exists = Title::query()->where('library_id', $titleLib->id)->where('keyword', $kw->keyword)->exists();
+        if (! $exists) {
+            $priority = in_array((string) $kw->value, ['高', '很高', '中高'], true) ? 'P1' : 'P2';
+            (new Title())->forceFill([
+                'library_id' => $titleLib->id,
+                'title' => $result['title'],
+                'keyword' => $kw->keyword,
+                'is_ai_generated' => true,
+                'used_count' => 0,
+                'usage_count' => 0,
+                'page_type' => $result['page_type'],
+                'value' => $kw->value,
+                'priority' => $priority,
+                'status' => '未生成',
+                'source' => 'ai',
+                'pack' => $kw->pack,
+                'core_word' => $kw->core_word,
+            ])->save();
+            $titleLib->update(['title_count' => Title::query()->where('library_id', $titleLib->id)->count()]);
+        }
+
+        $kw->forceFill(['status' => '已生成标题'])->save();
+
+        return response()->json([
+            'ok' => true,
+            'title' => $result['title'],
+            'page_type' => $result['page_type'],
+            'fallback_used' => $result['fallback_used'] ?? false,
+        ]);
     }
 }

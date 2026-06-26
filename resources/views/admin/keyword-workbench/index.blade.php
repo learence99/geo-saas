@@ -123,12 +123,17 @@
 (function(){
   const tok = document.querySelector('meta[name=csrf-token]')?.content || '';
   document.querySelectorAll('.gjw-title').forEach(b => b.addEventListener('click', async function(){
-    const tr = b.closest('tr'); const id = tr.dataset.id; b.disabled = true;
+    const tr = b.closest('tr'); const id = tr.dataset.id; const orig = b.textContent;
+    b.disabled = true; b.textContent = '蒸馏中…';
     try {
-      const res = await fetch('{{ route('admin.keyword-workbench.mark-titled') }}', {method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':tok,'Accept':'application/json'},body:JSON.stringify({id:parseInt(id,10)})});
+      const res = await fetch('{{ route('admin.keyword-workbench.distill') }}', {method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':tok,'Accept':'application/json'},body:JSON.stringify({id:parseInt(id,10)})});
       const d = await res.json();
-      if(d.ok){ const s=tr.querySelector('.c-status'); s.textContent='已生成标题'; s.className='c-status inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700'; }
-    } catch(e){} finally { b.disabled=false; }
+      if(d.ok){
+        const s = tr.querySelector('.c-status'); s.textContent='已生成标题'; s.className='c-status inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700';
+        b.textContent = '已生成';
+        alert('已蒸馏母标题:\n「' + d.title + '」\n页面类型:' + d.page_type + (d.fallback_used ? '\n(AI 不可用,已用模板兜底)' : '') + '\n\n可到左侧「标题库」查看。');
+      } else { alert('生成失败:' + (d.error || '')); b.textContent = orig; b.disabled = false; }
+    } catch(e){ alert('请求出错:' + e.message); b.textContent = orig; b.disabled = false; }
   }));
 })();
 </script>

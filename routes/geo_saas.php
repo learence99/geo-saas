@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\GeoScoreController;
 use App\Http\Controllers\Admin\KeywordExpandController;
 use App\Http\Controllers\Admin\KeywordWorkbenchController;
 use App\Http\Controllers\Admin\RankingTrackerController;
+use App\Http\Controllers\Admin\TitleWorkbenchController;
 use Illuminate\Support\Facades\Route;
 
 // 关键词库管理(自有功能模块,跑在原生 keywords 表上)
@@ -14,8 +15,11 @@ Route::prefix('keyword-workbench')->name('keyword-workbench.')->group(function (
     Route::get('/', [KeywordWorkbenchController::class, 'index'])->name('index');
     Route::post('generate', [KeywordWorkbenchController::class, 'generate'])->name('generate');
     Route::post('manual', [KeywordWorkbenchController::class, 'storeManual'])->name('manual');
-    Route::post('mark-titled', [KeywordWorkbenchController::class, 'markTitled'])->name('mark-titled');
+    Route::post('distill', [KeywordWorkbenchController::class, 'distillTitle'])->name('distill');
 });
+
+// 标题库管理(自有功能模块,跑在原生 titles 表上)
+Route::get('title-workbench', [TitleWorkbenchController::class, 'index'])->name('title-workbench.index');
 
 // 关键词库 · AI 扩词（焊进原生关键词库；入口在原生详情页按钮）
 Route::prefix('keyword-libraries/{libraryId}')->name('keyword-libraries.')->group(function () {

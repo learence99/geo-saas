@@ -40,7 +40,7 @@
                 'summary' => __('admin.materials.titles_summary'),
                 'icon' => 'type',
                 'tone' => 'bg-emerald-50 text-emerald-600',
-                'href' => route('admin.title-libraries.index'),
+                'href' => route('admin.title-workbench.index'),
                 'action' => __('admin.materials.manage_title_libraries'),
                 'metrics' => [
                     __('admin.materials.title_library_count') => __('admin.materials.unit_libraries', ['count' => (int) $stats['title_libraries']]),

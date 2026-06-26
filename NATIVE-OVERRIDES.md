@@ -11,7 +11,7 @@
 | `resources/views/admin/title-libraries/ai-generate.blade.php` | 表单增加「行业包 + 主体」两个字段（行业列表读 `config('geo_packs')`，主体默认站点名）；其余原样 | 需要让用户在原生"AI 生成标题"页选择行业与主体 | 看上游是否改了表单结构，把这两个字段重新插入 grid |
 | `resources/views/admin/keyword-libraries/detail.blade.php` | 头部操作区增加一个「AI 扩词」按钮，链到 `admin.keyword-libraries.ai-expand`；其余原样 | 关键词库需要一个"主动产词"入口（原生只有 URL 被动产词） | 看上游是否改了头部按钮区，把「AI 扩词」`<a>` 重新插入 |
 | `resources/views/admin/keyword-libraries/form.blade.php` | 创建模式下在表单上方增加「用 AI 生成并创建」卡片（建库+填词一步，POST 到 `admin.keyword-libraries.ai-new`）；编辑模式与原生一致 | 创建库时就能 AI 生成内容，免去"先建空库再填" | 看上游是否改了 form，把 `@if(!$isEdit)` 的 AI 卡片重新贴回 |
-| `resources/views/admin/materials/index.blade.php` | 仅把「关键词库管理」卡片 `href` 从 `admin.keyword-libraries.index` 改为 `admin.keyword-workbench.index`（指向自有工作台）；其余原样（1 行改动） | 统一关键词库入口到自有功能模块,原生那套退为内部管道 | 看上游是否改了卡片数组,把这 1 行 href 重新改过来 |
+| `resources/views/admin/materials/index.blade.php` | 把「关键词库管理」「标题库管理」两张卡片 `href` 改为 `admin.keyword-workbench.index` / `admin.title-workbench.index`（指向自有工作台）；其余原样（2 行改动） | 统一关键词/标题入口到自有功能模块,原生那套退为内部管道 | 看上游是否改了卡片数组,把这 2 行 href 重新改过来 |
 
 ## 没有改的（用更稳的方式接入）
 - **路由/鉴权**：用 `app/Providers/GeoSaasServiceProvider.php` 注入，不改 `routes/web.php`。

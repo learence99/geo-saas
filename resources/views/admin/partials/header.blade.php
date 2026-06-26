@@ -52,12 +52,13 @@
     // GEO SaaS 扩展模块（原生 admin.* 路由，纳入官方 $menu，自动高亮）
     // 注：选词引擎已"下沉"到原生素材库（关键词库·AI扩词 + 标题库·AI生成标题），不再单列菜单。
     $menu['keyword_workbench'] = ['route' => 'admin.keyword-workbench.index', 'name' => $gfuiEn ? 'Keyword Library' : '关键词库'];
+    $menu['title_workbench'] = ['route' => 'admin.title-workbench.index', 'name' => $gfuiEn ? 'Title Library' : '标题库'];
     $menu['ranking_tracker'] = ['route' => 'admin.ranking-tracker.index', 'name' => $gfuiEn ? 'Ranking Tracker' : '排名追踪'];
     $menu['geo_score'] = ['route' => 'admin.geo-score.index', 'name' => $gfuiEn ? 'Content Score' : '内容评分'];
     $groups = [
         ['label' => $gfuiEn ? 'Overview' : '概览', 'items' => ['dashboard', 'analytics']],
         ['label' => $gfuiEn ? 'Content' : '内容', 'items' => ['tasks', 'articles', 'distribution']],
-        ['label' => $gfuiEn ? 'Assets' : '素材', 'items' => ['materials', 'keyword_workbench']],
+        ['label' => $gfuiEn ? 'Assets' : '素材', 'items' => ['materials', 'keyword_workbench', 'title_workbench']],
         ['label' => $gfuiEn ? 'GEO Intelligence' : 'GEO 情报', 'items' => ['ranking_tracker', 'geo_score']],
         ['label' => $gfuiEn ? 'System' : '系统', 'items' => ['ai_config', 'site_settings', 'admin_users'], 'adv' => true],
     ];
@@ -65,7 +66,7 @@
         'dashboard' => 'layout-grid', 'analytics' => 'bar-chart-3', 'tasks' => 'list-checks',
         'articles' => 'file-text', 'distribution' => 'send', 'materials' => 'folder-open',
         'ai_config' => 'cpu', 'site_settings' => 'settings', 'admin_users' => 'users',
-        'geo_engine' => 'sparkles', 'ranking_tracker' => 'target', 'geo_score' => 'gauge', 'keyword_workbench' => 'key',
+        'geo_engine' => 'sparkles', 'ranking_tracker' => 'target', 'geo_score' => 'gauge', 'keyword_workbench' => 'key', 'title_workbench' => 'type',
     ];
     $advItems = ['distribution']; // 简单模式额外隐藏的进阶项
 @endphp
