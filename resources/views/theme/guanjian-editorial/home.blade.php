@@ -37,6 +37,17 @@
     </section>
 @endif
 
+@if($gjHome)
+    @include('site.partials.homepage-modules', [
+        'homepageModules' => $homepageModules ?? [],
+        'homepageStyle' => $homepageStyle ?? [],
+        'showHomepageModules' => $showHomepageModules ?? false,
+        'articles' => $articles,
+        'featuredArticles' => $featuredArticles,
+        'hotArticles' => $hotArticles,
+    ])
+@endif
+
 <div class="gj-sech">
     <h2>{{ $search !== '' ? __('site.search_breadcrumb', ['term' => $search]) : ($category ? $category->name : __('site.home_latest')) }}</h2>
 </div>

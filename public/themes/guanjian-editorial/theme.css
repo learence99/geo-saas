@@ -134,6 +134,33 @@
 .gj-filter a{font-size:13px;color:var(--muted);padding:6px 16px;border-radius:999px}
 .gj-filter a.on{background:var(--navy);color:#fff;font-weight:500}
 
+/* 原生 HomepageModuleBuilder 模块的观见样式 */
+.gj-body .geo-home-modules{display:flex;flex-direction:column;gap:22px;margin:26px 0 8px}
+.gj-body .geo-home-module{background:var(--card);border:1px solid #ece6db;border-radius:16px;padding:24px 26px;box-shadow:0 1px 4px rgba(40,30,50,.04)}
+.gj-body .geo-home-module__eyebrow{font-size:11.5px;color:var(--terra-d);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;font-weight:500}
+.gj-body .geo-home-module__title{font-family:var(--serif);font-size:22px;color:var(--ink);font-weight:700;margin:0 0 6px}
+.gj-body .geo-home-module__header{margin-bottom:16px}
+.gj-body .geo-home-module__header p{color:var(--muted);font-size:14px}
+.gj-body .geo-home-module__body{color:var(--ink2);font-size:15px;line-height:1.9}
+.gj-body .geo-home-module__link{display:inline-block;margin-top:14px;color:#fff;background:var(--terra);padding:9px 22px;border-radius:999px;font-size:14px;font-weight:500}
+.gj-body .geo-home-module__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.gj-body .geo-home-module__feature{background:var(--ivory);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.gj-body .geo-home-module__feature strong,.gj-body .geo-home-module__feature a{font-family:var(--serif);font-size:16px;color:var(--ink);font-weight:600;display:block;margin-bottom:6px}
+.gj-body .geo-home-module__feature a{color:var(--terra-d)}
+.gj-body .geo-home-module__feature p{color:var(--muted);font-size:13.5px;line-height:1.7}
+.gj-body .geo-home-module__metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:18px}
+.gj-body .geo-home-module__metric strong{font-family:var(--serif);font-size:26px;color:var(--navy);display:block}
+.gj-body .geo-home-module__metric span{color:var(--muted);font-size:13px}
+.gj-body .geo-home-module__articles{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px 18px}
+.gj-body .geo-home-module__article{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--soft);font-family:var(--serif);color:var(--ink)}
+.gj-body .geo-home-module__article:hover{color:var(--terra-d)}
+.gj-body .geo-home-module__article time{color:var(--subtle);font-size:12px;font-family:var(--sans);white-space:nowrap}
+.gj-body .geo-home-module__media img{border-radius:12px;margin-top:14px}
+.gj-body .geo-home-module--align-center .geo-home-module__content{text-align:center}
+.gj-body .geo-home-module--cta_band{background:var(--navy);border-color:var(--navy);text-align:center}
+.gj-body .geo-home-module--cta_band .geo-home-module__title{color:#fff}
+.gj-body .geo-home-module--cta_band .geo-home-module__body{color:#b9c6d2}
+
 @media(max-width:820px){
   .gj-hero,.gj-feed{grid-template-columns:1fr}
   .gj-rstat{display:none}
