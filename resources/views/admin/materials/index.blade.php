@@ -28,7 +28,7 @@
                 'summary' => __('admin.materials.keywords_summary'),
                 'icon' => 'key',
                 'tone' => 'bg-blue-50 text-blue-600',
-                'href' => route('admin.keyword-workbench.index'), {{-- GEO SaaS: 指向自有关键词库工作台 --}}
+                'href' => route('admin.keyword-workbench.index'), // GEO SaaS: 指向自有关键词库工作台
                 'action' => __('admin.materials.manage_keyword_libraries'),
                 'metrics' => [
                     __('admin.materials.keyword_library_count') => __('admin.materials.unit_libraries', ['count' => (int) $stats['keyword_libraries']]),
@@ -40,7 +40,7 @@
                 'summary' => __('admin.materials.titles_summary'),
                 'icon' => 'type',
                 'tone' => 'bg-emerald-50 text-emerald-600',
-                'href' => route('admin.title-workbench.index'), {{-- GEO SaaS: 指向自有标题库工作台 --}}
+                'href' => route('admin.title-workbench.index'), // GEO SaaS: 指向自有标题库工作台
                 'action' => __('admin.materials.manage_title_libraries'),
                 'metrics' => [
                     __('admin.materials.title_library_count') => __('admin.materials.unit_libraries', ['count' => (int) $stats['title_libraries']]),
