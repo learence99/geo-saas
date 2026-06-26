@@ -3,148 +3,175 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>观见风 · 前台主题预览 · 走四方旅游网</title>
+<title>走四方旅游网 · 观见风前台预览</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;600;700;900&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --navy:#16324f; --navy2:#0f2438; --terra:#c8742b; --terra-d:#8a4f1f;
-  --taupe:#a89f8e; --cream:#e7e3d9; --ivory:#faf9f5; --ivory2:#f2efe8;
-  --ink:#1a1f26; --ink2:#2c3138; --muted:#5b6470; --subtle:#8a8175; --line:#eae6dc;
-  --sage:#356b54; --plum:#5e3f5e; --wine:#6e3a44;
+  --bg:#f4f1ea; --card:#fff; --ink:#23252a; --ink2:#3a3d44; --muted:#6b6f78; --subtle:#9a9488;
+  --terra:#c8742b; --terra-d:#a85f1f; --line:#e6e1d6; --soft:#efeae0;
+  --navy:#2c4a63; --plum:#5e3f5e; --brown:#7a5836; --wine:#6e3a44; --sage:#356b54;
   --serif:'Noto Serif SC',serif; --sans:'Noto Sans SC',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:var(--sans);background:var(--ivory);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
-.wrap{max-width:1000px;margin:0 auto;padding:0 22px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
 .serif{font-family:var(--serif)}
 .pill{display:inline-block;font-size:12px;padding:3px 12px;border-radius:999px;font-weight:500}
 
-header{background:var(--navy);position:sticky;top:0;z-index:20}
-.hd{display:flex;align-items:center;justify-content:space-between;height:60px}
-.brand{display:flex;align-items:center;gap:11px}
-.brand .mk{width:26px;height:26px;border-radius:7px;background:var(--terra)}
-.brand .nm{font-family:var(--serif);color:var(--ivory);font-size:19px;font-weight:600;letter-spacing:.05em}
-nav.menu{display:flex;gap:6px}
-nav.menu a{font-size:14px;color:#c4cdd8;padding:8px 14px;border-radius:999px;transition:.15s}
-nav.menu a:hover{color:#fff;background:rgba(255,255,255,.08)}
+header{background:var(--bg);position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line)}
+.hd{display:flex;align-items:center;justify-content:space-between;height:66px}
+.left{display:flex;align-items:center;gap:34px}
+.logo{display:flex;align-items:baseline;gap:9px}
+.logo .cn{font-family:var(--serif);font-size:25px;font-weight:700;color:var(--ink);letter-spacing:.04em}
+.logo .en{font-size:11px;letter-spacing:.32em;color:var(--subtle);font-weight:500}
+.left nav{display:flex;gap:4px}
+.left nav a{font-size:14.5px;color:var(--ink2);padding:7px 13px;border-radius:8px;transition:.15s}
+.left nav a:hover{color:var(--terra-d)}
+.left nav a.on{background:#e7e1d4;color:var(--ink);font-weight:500}
+.right{display:flex;align-items:center;gap:14px}
+.search{display:flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 15px;width:230px;color:var(--subtle);font-size:13px}
+.search svg{flex-shrink:0}
+.member{background:var(--navy);color:#fff;font-size:13.5px;font-weight:500;padding:9px 18px;border-radius:999px}
+.avt{width:36px;height:36px;border-radius:50%;background:var(--terra);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500}
 
-.page{display:block;padding:30px 0 10px;scroll-margin-top:72px;border-top:1px solid var(--cream)}
-.page.first{border-top:none}
-.plabel{font-family:var(--serif);font-size:12.5px;color:var(--terra-d);background:#f3e3d3;display:inline-block;padding:3px 13px;border-radius:999px;margin-bottom:16px}
-.cap{font-size:11px;color:var(--taupe);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px}
-.cap::after{content:"";flex:1;height:1px;background:var(--line)}
+.page{display:block;padding:34px 0 14px;scroll-margin-top:80px}
+.plabel{font-family:var(--serif);font-size:12.5px;color:var(--terra-d);background:#f0e2cf;display:inline-block;padding:3px 13px;border-radius:999px;margin-bottom:18px}
 
-.feat{display:grid;grid-template-columns:1.6fr 1fr;gap:26px;align-items:center;padding-bottom:26px;border-bottom:1px solid var(--cream)}
-.feat .cover{height:230px;border-radius:14px;background:linear-gradient(135deg,#1f3d5c,#16324f);display:flex;align-items:flex-end;padding:18px;color:#9fb0c2;font-size:12px;box-shadow:0 10px 30px rgba(22,50,79,.16)}
-.feat h2{font-family:var(--serif);font-size:30px;line-height:1.42;color:var(--navy);font-weight:700;margin:12px 0}
-.feat p{color:var(--muted);font-size:15px;margin-bottom:14px}
-.meta{font-size:12.5px;color:var(--subtle)}
-.cols{display:grid;grid-template-columns:1fr 300px;gap:34px;margin-top:30px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-.card{cursor:pointer}
-.card .cv{height:140px;border-radius:12px;background:var(--cream);display:flex;align-items:center;justify-content:center;color:var(--taupe);font-size:12px;margin-bottom:12px}
-.card h3{font-family:var(--serif);font-size:18px;line-height:1.5;color:var(--ink);font-weight:600;transition:.15s}
-.card:hover h3{color:var(--terra-d)}
-.card .meta{margin-top:8px}
-aside .box{background:#fff;border:1px solid var(--cream);border-radius:14px;padding:18px;margin-bottom:18px;box-shadow:0 1px 4px rgba(22,50,79,.04)}
-aside h4{font-family:var(--serif);font-size:16px;color:var(--navy);margin-bottom:14px;font-weight:600}
-aside .rk{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--ivory2)}
-aside .rk:last-child{border:none}
-aside .rk .n{font-family:var(--serif);font-size:17px;color:var(--terra);font-weight:700;width:18px}
-aside .rk .t{font-size:13.5px;color:var(--ink2);line-height:1.5}
-aside .tags{display:flex;flex-wrap:wrap;gap:8px}
-aside .tags .pill{background:var(--ivory);border:1px solid var(--cream);color:var(--muted);cursor:pointer}
-aside .tags .pill:hover{border-color:var(--terra);color:var(--terra-d)}
+.hero{display:grid;grid-template-columns:1.18fr 1fr;background:var(--card);border-radius:18px;overflow:hidden;box-shadow:0 10px 34px rgba(40,30,50,.07);border:1px solid #ece6db}
+.cover{position:relative;overflow:hidden;min-height:420px;background:linear-gradient(140deg,#6a4a6c,#3f2a41);display:flex;align-items:flex-end;padding:22px}
+.cover .wm{position:absolute;right:-12px;top:-30px;font-family:var(--serif);font-weight:900;font-size:300px;line-height:1;color:rgba(255,255,255,.07)}
+.cover .hpill{position:relative;background:rgba(20,12,22,.42);color:#f3eaf0;font-size:12.5px;padding:5px 14px;border-radius:999px;backdrop-filter:blur(2px)}
+.hbody{padding:46px 44px;display:flex;flex-direction:column;justify-content:center}
+.hbody h1{font-family:var(--serif);font-size:33px;line-height:1.42;color:var(--ink);font-weight:700}
+.hbody p{color:var(--muted);font-size:15px;line-height:1.95;margin:18px 0 26px}
+.author{display:flex;align-items:center;gap:11px}
+.a-avt{width:38px;height:38px;border-radius:50%;background:var(--plum);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0}
+.a-avt.sm{width:24px;height:24px;font-size:11px}
+.a-nm{font-size:14px;color:var(--ink);font-weight:500}
+.a-rl{font-size:12px;color:var(--subtle);margin-top:1px}
+
+.sec-h{display:flex;align-items:center;justify-content:space-between;margin:42px 0 22px}
+.sec-h h2{font-family:var(--serif);font-size:22px;color:var(--ink);font-weight:700}
+.sec-h .all{font-size:13.5px;color:var(--terra-d);font-weight:500}
+.feed{display:grid;grid-template-columns:1fr 348px;gap:46px}
+.row{display:flex;gap:22px;padding:22px 0;border-bottom:1px solid var(--line)}
+.row:first-child{padding-top:0}
+.thumb{position:relative;overflow:hidden;width:206px;height:140px;border-radius:12px;flex-shrink:0;display:flex;align-items:flex-end;padding:11px;background:linear-gradient(140deg,var(--c1),var(--c2))}
+.thumb .wm{position:absolute;right:-6px;bottom:-34px;font-family:var(--serif);font-weight:900;font-size:128px;line-height:1;color:rgba(255,255,255,.1)}
+.thumb .cat{position:relative;background:rgba(15,12,18,.4);color:#fff;font-size:11.5px;padding:3px 11px;border-radius:6px}
+.rbody h3{font-family:var(--serif);font-size:20px;line-height:1.5;color:var(--ink);font-weight:600;transition:.15s}
+.row:hover .rbody h3{color:var(--terra-d)}
+.rbody p{color:var(--muted);font-size:14px;line-height:1.8;margin:9px 0 13px}
+.rmeta{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--subtle)}
+
+.hot{background:var(--card);border:1px solid #ece6db;border-radius:16px;padding:22px 22px 10px;align-self:start;box-shadow:0 1px 4px rgba(40,30,50,.04)}
+.hot h3{font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:700;display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.hot h3 .bar{width:4px;height:17px;background:var(--terra);border-radius:2px}
+.hl{list-style:none}
+.hl li{display:flex;gap:13px;padding:14px 0;border-bottom:1px solid var(--soft)}
+.hl li:last-child{border:none}
+.hl .n{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--terra);width:16px;flex-shrink:0;line-height:1.4}
+.hl .t{font-family:var(--serif);font-size:14.5px;color:var(--ink);line-height:1.55;font-weight:500}
+.hl .rd{font-size:12px;color:var(--subtle);margin-top:5px}
 
 .art{max-width:760px;margin:0 auto}
-.bc{font-size:12.5px;color:var(--subtle);margin-bottom:16px}
+.bc{font-size:12.5px;color:var(--subtle);margin-bottom:14px}
 .bc a{color:var(--terra-d)}
-.art h1{font-family:var(--serif);font-size:36px;line-height:1.4;color:var(--navy);font-weight:700;margin:8px 0 16px}
-.amate{font-size:13px;color:var(--subtle);padding-bottom:18px;border-bottom:1px solid var(--cream);margin-bottom:24px}
-.art p{font-size:16.5px;color:var(--ink2);line-height:2;margin-bottom:18px}
-.art h2{font-family:var(--serif);font-size:22px;color:var(--navy);font-weight:600;margin:30px 0 14px}
-.quote{font-family:var(--serif);border-left:3px solid var(--terra);padding:6px 0 6px 20px;margin:26px 0;font-size:19px;color:var(--navy);font-weight:500;line-height:1.8}
-.tagrow{display:flex;gap:9px;flex-wrap:wrap;margin:28px 0;padding-top:20px;border-top:1px solid var(--cream)}
-.tagrow .pill{background:#fff;border:1px solid var(--cream);color:var(--muted)}
-.cta{background:var(--navy);border-radius:16px;padding:24px 26px;display:flex;align-items:center;justify-content:space-between;margin:30px 0;box-shadow:0 10px 30px rgba(22,50,79,.14)}
-.cta .t{font-family:var(--serif);color:var(--ivory);font-size:19px;font-weight:600}
-.cta .s{color:#9fb0c2;font-size:13px;margin-top:4px}
-.cta .btn{background:var(--terra);color:#fff;font-size:14px;font-weight:500;padding:11px 26px;border-radius:999px;cursor:pointer;white-space:nowrap}
-.related h4{font-family:var(--serif);font-size:18px;color:var(--navy);margin:34px 0 14px;font-weight:600}
-.related .ri{padding:11px 0;border-bottom:1px solid var(--ivory2);font-family:var(--serif);font-size:16px;color:var(--ink);cursor:pointer}
-.related .ri:hover{color:var(--terra-d)}
+.art h1{font-family:var(--serif);font-size:36px;line-height:1.4;color:var(--ink);font-weight:700;margin:8px 0 18px}
+.amate{display:flex;align-items:center;gap:11px;padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:26px}
+.art p{font-size:16.5px;color:var(--ink2);line-height:2.05;margin-bottom:18px}
+.art h2{font-family:var(--serif);font-size:22px;color:var(--ink);font-weight:600;margin:30px 0 14px}
+.quote{font-family:var(--serif);border-left:3px solid var(--terra);padding:6px 0 6px 20px;margin:26px 0;font-size:19px;color:var(--ink);font-weight:500;line-height:1.85}
+.tagrow{display:flex;gap:9px;flex-wrap:wrap;margin:28px 0;padding-top:20px;border-top:1px solid var(--line)}
+.tagrow .pill{background:#fff;border:1px solid var(--line);color:var(--muted)}
+.cta{background:var(--navy);border-radius:16px;padding:24px 26px;display:flex;align-items:center;justify-content:space-between;margin:32px 0;box-shadow:0 10px 30px rgba(40,30,50,.12)}
+.cta .t{font-family:var(--serif);color:#fff;font-size:19px;font-weight:600}
+.cta .s{color:#b9c6d2;font-size:13px;margin-top:4px}
+.cta .btn{background:var(--terra);color:#fff;font-size:14px;font-weight:500;padding:11px 26px;border-radius:999px;white-space:nowrap}
 
-.cathead{padding:22px 0 24px;border-bottom:1px solid var(--cream);margin-bottom:8px}
-.cathead h1{font-family:var(--serif);font-size:30px;color:var(--navy);font-weight:700}
-.cathead p{color:var(--muted);font-size:14px;margin-top:6px}
-.lrow{display:flex;gap:20px;padding:20px 0;border-bottom:1px solid var(--ivory2);cursor:pointer}
-.lrow .cv{width:170px;height:108px;border-radius:11px;background:var(--cream);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--taupe);font-size:12px}
-.lrow h3{font-family:var(--serif);font-size:20px;color:var(--ink);font-weight:600;line-height:1.5}
-.lrow:hover h3{color:var(--terra-d)}
-.lrow p{color:var(--muted);font-size:14px;margin:8px 0 10px;line-height:1.7}
+.cathead{padding:6px 0 24px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.cathead h1{font-family:var(--serif);font-size:30px;color:var(--ink);font-weight:700;margin-top:10px}
+.cathead p{color:var(--muted);font-size:14px;margin-top:8px}
 
-footer{background:var(--navy2);color:#8fa0b2;padding:30px 0;margin-top:24px}
+footer{background:#2a2520;color:#a99f8f;padding:34px 0;margin-top:30px}
 .ft{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-.ft .l{font-family:var(--serif);color:var(--cream);font-size:16px}
-.ft .r{font-size:12px;color:#6b7d90}
-.note{max-width:1000px;margin:14px auto 0;padding:10px 22px;font-size:12px;color:var(--subtle)}
-@media(max-width:760px){.feat,.cols,.grid{grid-template-columns:1fr}.feat h2{font-size:24px}.art h1{font-size:27px}}
+.ft .l{font-family:var(--serif);color:#e7e3d9;font-size:17px}
+.ft .r{font-size:12px;color:#857c6d}
+.note{max-width:1180px;margin:14px auto 0;padding:8px 28px;font-size:12px;color:var(--subtle)}
+@media(max-width:820px){.hero,.feed{grid-template-columns:1fr}.cover{min-height:240px}.left nav,.search{display:none}.art h1,.hbody h1{font-size:25px}}
 </style>
 </head>
 <body>
 <header>
   <div class="wrap hd">
-    <div class="brand"><div class="mk"></div><div class="nm">走四方旅游网</div></div>
-    <nav class="menu">
-      <a href="#home">首页</a>
-      <a href="#article">文章页</a>
-      <a href="#cat">分类页</a>
-    </nav>
+    <div class="left">
+      <div class="logo"><span class="cn">走四方</span><span class="en">TRAVEL</span></div>
+      <nav>
+        <a class="on" href="#home">首页</a><a href="#cat">美国</a><a>欧洲</a><a href="#article">攻略</a><a>签证</a><a>亲子</a>
+      </nav>
+    </div>
+    <div class="right">
+      <div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9a9488" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>搜索目的地、攻略</div>
+      <div class="member">立即咨询</div>
+      <div class="avt">王</div>
+    </div>
   </div>
 </header>
 
-<div class="note">观见风前台主题预览 · 设计稿(数据为示例)· 三页平铺,点顶部导航跳转,或直接下滑。</div>
+<div class="note">观见风前台主题预览 · 设计稿(数据为示例)· 三页平铺,点顶部「首页/攻略/美国」跳转或下滑查看。</div>
 
-<main class="page first wrap" id="home">
+<main class="page wrap" id="home">
   <span class="plabel">页面一 · 首页</span>
-  <div class="cap">最新 · Latest</div>
-  <div class="feat">
-    <div>
-      <span class="pill" style="background:var(--terra);color:#fff">美国 · 洛杉矶</span>
-      <h2>洛杉矶五日游怎么安排？班期、余位与费用一次说清</h2>
-      <p>把时间花在刀刃上——市区、环球影城、圣地亚哥与一号公路如何取舍，跟团与自由行各适合谁，报名前要确认什么。</p>
-      <div class="meta">走四方旅游网 · 2026-06-25 · 1.2k 浏览</div>
+  <section class="hero">
+    <div class="cover"><span class="wm">游</span><span class="hpill">编辑头条 · 美国</span></div>
+    <div class="hbody">
+      <h1>洛杉矶五日游怎么安排？班期、余位与费用一次说清</h1>
+      <p>把有限的时间花在刀刃上——市区、环球影城、圣地亚哥与一号公路如何取舍，跟团与自由行各适合谁，报名前又该确认什么，这一篇替你理清。</p>
+      <div class="author"><span class="a-avt">编</span><div><div class="a-nm">走四方编辑部</div><div class="a-rl">资深旅行顾问 · 1周前</div></div></div>
     </div>
-    <div class="cover">封面图（文章配图位）</div>
-  </div>
-  <div class="cols">
-    <div>
-      <div class="grid">
-        <div class="card"><div class="cv">配图</div><span class="pill" style="background:#e3efe8;color:var(--sage)">行程</span><h3 style="margin-top:8px">洛杉矶跟团游和自由行，哪个更适合带老人小孩？</h3><div class="meta">2026-06 · 860 浏览</div></div>
-        <div class="card"><div class="cv">配图</div><span class="pill" style="background:#ece1ec;color:var(--plum)">签证</span><h3 style="margin-top:8px">美国签证面签要准备什么材料？常见拒签原因有哪些？</h3><div class="meta">2026-06 · 1.5k 浏览</div></div>
-        <div class="card"><div class="cv">配图</div><span class="pill" style="background:#f3e3d3;color:var(--terra-d)">费用</span><h3 style="margin-top:8px">洛杉矶五日游费用包含什么？自费和小费要预留多少？</h3><div class="meta">2026-06 · 540 浏览</div></div>
-        <div class="card"><div class="cv">配图</div><span class="pill" style="background:#f0e0e2;color:var(--wine)">亲子</span><h3 style="margin-top:8px">带孩子去洛杉矶，几月份去最划算、玩得最舒服？</h3><div class="meta">2026-06 · 720 浏览</div></div>
-      </div>
-    </div>
-    <aside>
-      <div class="box">
-        <h4>热门阅读</h4>
-        <div class="rk"><span class="n">1</span><span class="t">美国签证面签要准备什么材料？</span></div>
-        <div class="rk"><span class="n">2</span><span class="t">洛杉矶五日游班期余位还有吗</span></div>
-        <div class="rk"><span class="n">3</span><span class="t">跟团游和自由行怎么选</span></div>
-        <div class="rk"><span class="n">4</span><span class="t">美西一号公路自驾几天合适</span></div>
-      </div>
-      <div class="box">
-        <h4>标签</h4>
-        <div class="tags">
-          <span class="pill">洛杉矶</span><span class="pill">美国签证</span><span class="pill">跟团游</span>
-          <span class="pill">亲子游</span><span class="pill">一号公路</span><span class="pill">班期余位</span>
+  </section>
+
+  <div class="sec-h"><h2>编辑精选</h2><a class="all" href="#cat">查看全部 →</a></div>
+  <div class="feed">
+    <div class="list">
+      <article class="row">
+        <div class="thumb" style="--c1:#2c4a63;--c2:#1b3146"><span class="wm">略</span><span class="cat">攻略</span></div>
+        <div class="rbody">
+          <h3>洛杉矶跟团游和自由行，哪个更适合带老人小孩？</h3>
+          <p>带老人孩子、第一次去美西、英语不便的家庭，跟团更省心；时间充裕想自驾深度玩的，自由行自由度更高——差别不在价格，在谁来处理路上的不确定性。</p>
+          <div class="rmeta"><span class="a-avt sm">林</span>林知远 · 12 分钟 · 2.4万 阅读</div>
         </div>
-      </div>
+      </article>
+      <article class="row">
+        <div class="thumb" style="--c1:#5e3f5e;--c2:#3f2a40"><span class="wm">签</span><span class="cat">签证</span></div>
+        <div class="rbody">
+          <h3>美国签证面签要准备什么材料？常见拒签原因有哪些？</h3>
+          <p>材料清单、面签流程与常见拒签点，报名与签证的先后顺序怎么排——把不确定的环节前置确认，比临时补救更稳妥。</p>
+          <div class="rmeta"><span class="a-avt sm" style="background:var(--brown)">陈</span>陈墨 · 9 分钟 · 1.8万 阅读</div>
+        </div>
+      </article>
+      <article class="row">
+        <div class="thumb" style="--c1:#7a5836;--c2:#4f3a23"><span class="wm">费</span><span class="cat">费用</span></div>
+        <div class="rbody">
+          <h3>洛杉矶五日游费用包含什么？自费和小费要预留多少？</h3>
+          <p>跟团通常含住宿、用车与主要门票；自费项目与小费需单列预算。报名前把"包含/不包含"逐项问清，比只看总价更重要。</p>
+          <div class="rmeta"><span class="a-avt sm" style="background:var(--sage)">苏</span>苏晚 · 7 分钟 · 1.1万 阅读</div>
+        </div>
+      </article>
+    </div>
+    <aside class="hot">
+      <h3><span class="bar"></span>本周热榜</h3>
+      <ol class="hl">
+        <li><span class="n">1</span><div><div class="t">洛杉矶五日游班期、余位与费用一次说清</div><div class="rd">3.1万 阅读</div></div></li>
+        <li><span class="n">2</span><div><div class="t">美国签证面签要准备什么材料？</div><div class="rd">2.4万 阅读</div></div></li>
+        <li><span class="n">3</span><div><div class="t">跟团游和自由行，带老人小孩怎么选</div><div class="rd">2.0万 阅读</div></div></li>
+        <li><span class="n">4</span><div><div class="t">美西一号公路自驾，几天合适？</div><div class="rd">1.6万 阅读</div></div></li>
+        <li><span class="n">5</span><div><div class="t">带孩子去洛杉矶，几月份最划算</div><div class="rd">1.2万 阅读</div></div></li>
+      </ol>
     </aside>
   </div>
 </main>
@@ -153,15 +180,15 @@ footer{background:var(--navy2);color:#8fa0b2;padding:30px 0;margin-top:24px}
   <span class="plabel">页面二 · 文章页</span>
   <div class="art">
     <div class="bc"><a>首页</a> / <a>攻略</a> / 洛杉矶五日游</div>
-    <span class="pill" style="background:#f3e3d3;color:var(--terra-d)">攻略 · 美国</span>
+    <span class="pill" style="background:#f0e2cf;color:var(--terra-d)">攻略 · 美国</span>
     <h1>洛杉矶五日游怎么安排？班期、余位与费用一次说清</h1>
-    <div class="amate">走四方旅游网 · 2026-06-25 · 阅读 6 分钟 · 1.2k 浏览</div>
+    <div class="amate"><span class="a-avt">编</span><div><div class="a-nm">走四方编辑部</div><div class="a-rl">2026-06-25 · 阅读 6 分钟 · 1.2万 浏览</div></div></div>
     <p>洛杉矶五日游的核心，是把有限的时间花在刀刃上。第一天通常安排市区与环球影城，第二天前往圣地亚哥或沿一号公路北上，余下两天可灵活机动，按同行人群的体力和兴趣来定。</p>
     <h2>跟团还是自由行？</h2>
-    <p>带老人小孩、或第一次去美西、英语不便的家庭，跟团在用车、住宿和门票上更省心；时间充裕、想自驾深度玩的，自由行自由度更高。两者最大的差别不在价格，而在“谁来处理路上的不确定性”。</p>
+    <p>带老人小孩、或第一次去美西、英语不便的家庭，跟团在用车、住宿和门票上更省心；时间充裕、想自驾深度玩的，自由行自由度更高。两者最大的差别不在价格，而在"谁来处理路上的不确定性"。</p>
     <div class="quote">班期与余位每周变动，报名前先确认出发日期，再谈行程更稳妥。</div>
     <h2>费用怎么算？</h2>
-    <p>跟团五日游通常包含住宿、用车与主要门票；自费项目（如部分主题乐园、特色餐）和小费需要单列预算。报名前把“包含/不包含”逐项问清，比只看总价更重要。</p>
+    <p>跟团五日游通常包含住宿、用车与主要门票；自费项目（如部分主题乐园、特色餐）和小费需要单列预算。报名前把"包含/不包含"逐项问清，比只看总价更重要。</p>
     <div class="tagrow">
       <span class="pill">洛杉矶</span><span class="pill">五日游</span><span class="pill">跟团</span><span class="pill">班期余位</span><span class="pill">费用</span>
     </div>
@@ -169,30 +196,45 @@ footer{background:var(--navy2);color:#8fa0b2;padding:30px 0;margin-top:24px}
       <div><div class="t">想报洛杉矶五日游？</div><div class="s">查最新班期与余位，顾问 1 对 1 帮你定行程</div></div>
       <div class="btn">立即咨询</div>
     </div>
-    <div class="related">
-      <h4>相关阅读</h4>
-      <div class="ri">美国签证面签要准备什么材料？常见拒签原因有哪些？</div>
-      <div class="ri">洛杉矶跟团游和自由行，哪个更适合带老人小孩？</div>
-      <div class="ri">带孩子去洛杉矶，几月份去最划算？</div>
-    </div>
   </div>
 </main>
 
 <main class="page wrap" id="cat">
   <span class="plabel">页面三 · 分类/列表页</span>
   <div class="cathead">
-    <span class="pill" style="background:var(--navy);color:var(--ivory)">分类</span>
-    <h1 style="margin-top:10px">美国 · 旅游攻略</h1>
+    <span class="pill" style="background:var(--navy);color:#fff">分类</span>
+    <h1>美国 · 旅游攻略</h1>
     <p>洛杉矶、旧金山、一号公路、签证与行程——出行前你会问的，这里都有。</p>
   </div>
-  <div class="lrow"><div class="cv">配图</div><div><h3>洛杉矶五日游怎么安排？班期、余位与费用一次说清</h3><p>把时间花在刀刃上，跟团与自由行各适合谁，报名前要确认什么。</p><div class="meta"><span class="pill" style="background:#f3e3d3;color:var(--terra-d);margin-right:8px">攻略</span>2026-06 · 1.2k 浏览</div></div></div>
-  <div class="lrow"><div class="cv">配图</div><div><h3>美国签证面签要准备什么材料？常见拒签原因有哪些？</h3><p>材料清单、面签流程与常见拒签点，报名与签证的先后顺序怎么排。</p><div class="meta"><span class="pill" style="background:#ece1ec;color:var(--plum);margin-right:8px">签证</span>2026-06 · 1.5k 浏览</div></div></div>
-  <div class="lrow"><div class="cv">配图</div><div><h3>带孩子去洛杉矶，几月份去最划算、玩得最舒服？</h3><p>淡旺季、天气与亲子项目，避开人挤人的时段。</p><div class="meta"><span class="pill" style="background:#f0e0e2;color:var(--wine);margin-right:8px">亲子</span>2026-06 · 720 浏览</div></div></div>
+  <div class="feed">
+    <div class="list">
+      <article class="row" style="padding-top:22px">
+        <div class="thumb" style="--c1:#2c4a63;--c2:#1b3146"><span class="wm">略</span><span class="cat">攻略</span></div>
+        <div class="rbody"><h3>洛杉矶五日游怎么安排？班期、余位与费用一次说清</h3><p>把时间花在刀刃上，跟团与自由行各适合谁，报名前要确认什么。</p><div class="rmeta"><span class="a-avt sm">编</span>走四方编辑部 · 1.2万 阅读</div></div>
+      </article>
+      <article class="row">
+        <div class="thumb" style="--c1:#5e3f5e;--c2:#3f2a40"><span class="wm">签</span><span class="cat">签证</span></div>
+        <div class="rbody"><h3>美国签证面签要准备什么材料？常见拒签原因有哪些？</h3><p>材料清单、面签流程与常见拒签点，报名与签证的先后顺序怎么排。</p><div class="rmeta"><span class="a-avt sm" style="background:var(--brown)">陈</span>陈墨 · 1.5万 阅读</div></div>
+      </article>
+      <article class="row">
+        <div class="thumb" style="--c1:#6e3a44;--c2:#48262d"><span class="wm">亲</span><span class="cat">亲子</span></div>
+        <div class="rbody"><h3>带孩子去洛杉矶，几月份去最划算、玩得最舒服？</h3><p>淡旺季、天气与亲子项目，避开人挤人的时段。</p><div class="rmeta"><span class="a-avt sm" style="background:var(--sage)">苏</span>苏晚 · 720 阅读</div></div>
+      </article>
+    </div>
+    <aside class="hot">
+      <h3><span class="bar"></span>美国 · 热门</h3>
+      <ol class="hl">
+        <li><span class="n">1</span><div><div class="t">洛杉矶五日游班期余位还有吗</div><div class="rd">3.1万 阅读</div></div></li>
+        <li><span class="n">2</span><div><div class="t">美国签证面签材料清单</div><div class="rd">2.4万 阅读</div></div></li>
+        <li><span class="n">3</span><div><div class="t">美西一号公路自驾几天合适</div><div class="rd">1.6万 阅读</div></div></li>
+      </ol>
+    </aside>
+  </div>
 </main>
 
 <footer>
   <div class="wrap ft">
-    <div class="l">走四方旅游网</div>
+    <div class="l">走四方 TRAVEL</div>
     <div class="r">© 2026 走四方旅游网 · 观见风主题预览</div>
   </div>
 </footer>
