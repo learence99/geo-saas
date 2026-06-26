@@ -36,6 +36,7 @@
         'admin.title-libraries.index' => 'materials', 'admin.title-libraries.create' => 'materials', 'admin.title-libraries.edit' => 'materials', 'admin.title-libraries.detail' => 'materials',
         'admin.image-libraries.index' => 'materials', 'admin.image-libraries.create' => 'materials', 'admin.image-libraries.edit' => 'materials', 'admin.image-libraries.detail' => 'materials',
         'admin.knowledge-bases.index' => 'materials', 'admin.knowledge-bases.create' => 'materials', 'admin.knowledge-bases.edit' => 'materials', 'admin.knowledge-bases.detail' => 'materials',
+        'admin.enterprise-knowledge.index' => 'materials', 'admin.enterprise-knowledge.create' => 'materials', 'admin.enterprise-knowledge.show' => 'materials', // v2.1.0 企业知识库
         'admin.url-import' => 'materials',
         'admin.ai-models.index' => 'ai_config', 'admin.ai-prompts' => 'ai_config',
         'admin.site-settings.sensitive-words' => 'site_settings', 'admin.security-settings.index' => 'site_settings',

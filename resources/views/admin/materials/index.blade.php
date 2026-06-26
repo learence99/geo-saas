@@ -28,7 +28,7 @@
                 'summary' => __('admin.materials.keywords_summary'),
                 'icon' => 'key',
                 'tone' => 'bg-blue-50 text-blue-600',
-                'href' => route('admin.keyword-workbench.index'),
+                'href' => route('admin.keyword-workbench.index'), {{-- GEO SaaS: 指向自有关键词库工作台 --}}
                 'action' => __('admin.materials.manage_keyword_libraries'),
                 'metrics' => [
                     __('admin.materials.keyword_library_count') => __('admin.materials.unit_libraries', ['count' => (int) $stats['keyword_libraries']]),
@@ -40,7 +40,7 @@
                 'summary' => __('admin.materials.titles_summary'),
                 'icon' => 'type',
                 'tone' => 'bg-emerald-50 text-emerald-600',
-                'href' => route('admin.title-workbench.index'),
+                'href' => route('admin.title-workbench.index'), {{-- GEO SaaS: 指向自有标题库工作台 --}}
                 'action' => __('admin.materials.manage_title_libraries'),
                 'metrics' => [
                     __('admin.materials.title_library_count') => __('admin.materials.unit_libraries', ['count' => (int) $stats['title_libraries']]),
@@ -88,10 +88,14 @@
                             <i data-lucide="brain" class="mr-2 h-4 w-4"></i>
                             {{ __('admin.materials.knowledge_hub_label') }}
                         </span>
-                        <div class="grid w-full grid-cols-1 gap-3 sm:w-auto sm:grid-cols-3 lg:min-w-[560px]">
+                        <div class="grid w-full grid-cols-1 gap-3 sm:w-auto sm:grid-cols-2 lg:grid-cols-4 lg:min-w-[760px]">
                             <a href="{{ route('admin.knowledge-bases.create') }}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-700">
                                 <i data-lucide="plus" class="mr-2 h-4 w-4"></i>
                                 {{ __('admin.materials.knowledge_hub_create') }}
+                            </a>
+                            <a href="{{ route('admin.enterprise-knowledge.create') }}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md border border-orange-200 bg-white px-4 py-2 text-sm font-semibold text-orange-700 hover:bg-orange-50">
+                                <i data-lucide="sparkles" class="mr-2 h-4 w-4"></i>
+                                {{ __('admin.materials.knowledge_hub_enterprise') }}
                             </a>
                             <a href="{{ route('admin.knowledge-bases.index') }}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md border border-orange-200 bg-white px-4 py-2 text-sm font-semibold text-orange-700 hover:bg-orange-50">
                                 <i data-lucide="database" class="mr-2 h-4 w-4"></i>

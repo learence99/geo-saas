@@ -32,6 +32,14 @@
 - 保护命名空间 `\GeoFlow`、env `GEOFLOW_`、配置键 `geoflow.`（大小写区分，命中不到，不会坏功能）。
 - 幂等，可反复执行。**原生文件被 cp 重新覆盖后必须重跑**，否则品牌痕迹回来。
 
+## 升级记录
+- **2026-06-26 升级到 GEOFlow v2.1.0**（上游 `b9a294f feat: add enterprise knowledge drafting workflow`）。
+  - v2.1.0 = 企业知识库草稿工作流，**几乎全是新增文件**（controller/service/3 models/job/migration/3 视图/lang+173/routes+20），与我们二开零冲突。
+  - **唯一冲突 `materials/index.blade.php`**：上游在"知识中心"工具条加了企业知识库入口；我们覆盖的是下方关键词/标题卡片 href，两处不同段。已用 v2.1.0 新版重铺 + 重新焊上 2 处 href（keyword-workbench / title-workbench）。
+  - 其余 4 个覆盖文件、关键词/标题扩展迁移、dashboard、welcome-modal —— 上游均未触碰，无需动。
+  - 侧栏 `subMap` 新增 `admin.enterprise-knowledge.*` → 'materials' 高亮。
+  - `whitelabel.sh` 新增第④步：精确替换企业知识库 AI 系统提示词里的 "GEOFlow"。
+
 ## 行业策略的唯一来源
 所有"行业不同的 prompt / 词表 / 阈值 / 合规"集中在 `config/geo_packs.php`。
 加行业 = 加一个 slug；调 prompt = 改这个文件——**不碰原生代码**。

@@ -50,5 +50,11 @@ while IFS= read -r -d '' f; do
   COUNT=$((COUNT+1))
 done < <(find "$ROOT/lang" "$ROOT/resources/views/admin" -type f \( -name '*.php' -o -name '*.blade.php' \) -print0)
 
+# ── ④ 企业知识库（v2.1.0）AI 系统提示词里的品牌。精确字符串替换，不碰命名空间/类名。
+EKS="$ROOT/app/Services/GeoFlow/EnterpriseKnowledgeDraftService.php"
+if [ -f "$EKS" ]; then
+  perl -i -pe 'BEGIN{$b=$ENV{"WL_BRAND"}} s/你是 GEOFlow 企业知识库整理助手/你是 $b 企业知识库整理助手/g' "$EKS"
+fi
+
 echo "✓ 白标完成  根目录=$ROOT  品牌=$BRAND  处理文件=$COUNT"
 echo "  记得接着执行： docker compose exec app php artisan optimize:clear"
