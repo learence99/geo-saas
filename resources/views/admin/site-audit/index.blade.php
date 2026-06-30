@@ -125,18 +125,29 @@
   function run(){
     var url = $url.value.trim();
     if(!url){ msg('请输入网址', true); return; }
-    $btn.disabled = true; $btn.textContent = '体检中…'; clearMsg(); $res.hidden = true;
+    $btn.disabled = true; $btn.textContent = '体检中…'; $res.hidden = true;
+    msg('正在抓取目标网站并检测，最多约 20 秒…', false);
+    var ctrl = new AbortController();
+    var killed = false;
+    var to = setTimeout(function(){ killed = true; ctrl.abort(); }, 25000);
     fetch(RUN_URL, {
       method:'POST',
       headers:{'Content-Type':'application/json','X-CSRF-TOKEN':CSRF,'Accept':'application/json'},
-      body: JSON.stringify({ url: url })
+      body: JSON.stringify({ url: url }),
+      signal: ctrl.signal
     }).then(function(resp){ return resp.json().then(function(j){ return {ok: resp.ok, j: j}; }); })
       .then(function(o){
         if(!o.ok || o.j.ok === false){ msg(o.j.error || '体检失败', true); return; }
-        render(o.j);
+        clearMsg(); render(o.j);
       })
-      .catch(function(e){ msg('请求出错：' + e.message, true); })
-      .finally(function(){ $btn.disabled = false; $btn.textContent = '开始体检'; });
+      .catch(function(e){
+        if(killed || e.name === 'AbortError'){
+          msg('目标网站 25 秒无响应 —— 多半是这台服务器访问不了该网址（国外站常见）。先试你自己的站或国内网址，确认功能正常。', true);
+        } else {
+          msg('请求出错：' + e.message, true);
+        }
+      })
+      .finally(function(){ clearTimeout(to); $btn.disabled = false; $btn.textContent = '开始体检'; });
   }
 
   $btn.addEventListener('click', run);
