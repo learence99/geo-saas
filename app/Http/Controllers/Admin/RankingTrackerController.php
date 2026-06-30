@@ -41,7 +41,7 @@ class RankingTrackerController extends Controller
         }
 
         return view('admin.ranking-tracker.index', [
-            'pageTitle' => 'AI 排名追踪',
+            'pageTitle' => 'AI 可见度',
             'activeMenu' => 'ranking_tracker',
             'adminSiteName' => AdminWeb::siteName(),
             'rows' => $rows,

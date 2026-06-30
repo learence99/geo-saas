@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\GeoScoreController;
 use App\Http\Controllers\Admin\KeywordExpandController;
 use App\Http\Controllers\Admin\KeywordWorkbenchController;
 use App\Http\Controllers\Admin\RankingTrackerController;
+use App\Http\Controllers\Admin\SiteAuditController;
 use App\Http\Controllers\Admin\TitleWorkbenchController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,4 +45,10 @@ Route::prefix('ranking-tracker')->name('ranking-tracker.')->group(function () {
     Route::get('/', [RankingTrackerController::class, 'index'])->name('index');
     Route::post('add', [RankingTrackerController::class, 'store'])->name('add');
     Route::post('check', [RankingTrackerController::class, 'check'])->name('check');
+});
+
+// 站点体检 / GEO 诊断(纯 PHP 抓取解析,零 AI 成本)
+Route::prefix('site-audit')->name('site-audit.')->group(function () {
+    Route::get('/', [SiteAuditController::class, 'index'])->name('index');
+    Route::post('run', [SiteAuditController::class, 'run'])->name('run');
 });

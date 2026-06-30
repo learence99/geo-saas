@@ -5,8 +5,8 @@
 <div class="gft">
   <div style="display:flex;align-items:flex-start;margin-bottom:6px">
     <div>
-      <h1>AI 排名追踪 <span class="pill blue" style="vertical-align:middle">MVP</span></h1>
-      <p class="sub">拿你的问题去"问"AI 引擎，解析答案里有没有引用你、排第几。真数据采集，非示例。</p>
+      <h1>AI 可见度 <span class="pill blue" style="vertical-align:middle">MVP</span></h1>
+      <p class="sub">拿你的问题去"问"AI 引擎，解析答案里有没有引用你、排第几、提了哪些竞品。真数据采集，非示例。</p>
     </div>
   </div>
 
