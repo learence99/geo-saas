@@ -34,7 +34,7 @@ class SiteAuditService
             $resp = Http::withHeaders([
                 'User-Agent' => 'Mozilla/5.0 (compatible; GEO-SaaS-Audit/1.0)',
                 'Accept' => 'text/html,application/xhtml+xml',
-            ])->connectTimeout(6)->timeout(12)->get($url);
+            ])->connectTimeout(5)->timeout(9)->get($url);
         } catch (\Throwable $e) {
             return ['url' => $url, 'ok' => false, 'error' => '无法访问该网址：' . $e->getMessage(), 'score' => 0, 'summary' => [], 'groups' => []];
         }
@@ -42,6 +42,10 @@ class SiteAuditService
             return ['url' => $url, 'ok' => false, 'error' => '该网址返回 HTTP ' . $resp->status() . '，无法体检', 'score' => 0, 'summary' => [], 'groups' => []];
         }
         $html = (string) $resp->body();
+        // 重页面（如 baidu 首页）HTML 极大、DOM 解析很慢——截断到合理上限，足够覆盖 head 与主体结构
+        if (strlen($html) > 700000) {
+            $html = substr($html, 0, 700000);
+        }
 
         // 2) DOM 解析
         $dom = new \DOMDocument();
@@ -53,9 +57,9 @@ class SiteAuditService
         // 3) 旁路资源（robots / llms.txt / sitemap.xml）——并发抓取，把 3 次串行压成 1 次
         $ua = ['User-Agent' => 'GEO-SaaS-Audit/1.0'];
         $pool = Http::pool(fn ($p) => [
-            $p->as('robots')->connectTimeout(4)->timeout(6)->withHeaders($ua)->get($origin . '/robots.txt'),
-            $p->as('llms')->connectTimeout(4)->timeout(6)->withHeaders($ua)->get($origin . '/llms.txt'),
-            $p->as('sitemap')->connectTimeout(4)->timeout(6)->withHeaders($ua)->get($origin . '/sitemap.xml'),
+            $p->as('robots')->connectTimeout(3)->timeout(4)->withHeaders($ua)->get($origin . '/robots.txt'),
+            $p->as('llms')->connectTimeout(3)->timeout(4)->withHeaders($ua)->get($origin . '/llms.txt'),
+            $p->as('sitemap')->connectTimeout(3)->timeout(4)->withHeaders($ua)->get($origin . '/sitemap.xml'),
         ]);
         $robots = $this->bodyOf($pool['robots'] ?? null);
         $hasLlms = $this->exists($pool['llms'] ?? null);
