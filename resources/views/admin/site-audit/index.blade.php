@@ -5,7 +5,7 @@
 <div class="sa">
   <div class="sa-head">
     <h1>站点体检 <span class="sa-pill">GEO 诊断</span></h1>
-    <p class="sa-sub">输入任意网址，一键检查 SEO 基础与 AI 可见度问题——纯规则检测，秒出，零成本。</p>
+    <p class="sa-sub">输入任意网址，一键检查 SEO 基础与 AI 可见度问题——纯规则检测，通常几秒出结果，零成本。</p>
   </div>
 
   <div class="sa-card">

@@ -34,7 +34,7 @@ class SiteAuditService
             $resp = Http::withHeaders([
                 'User-Agent' => 'Mozilla/5.0 (compatible; GEO-SaaS-Audit/1.0)',
                 'Accept' => 'text/html,application/xhtml+xml',
-            ])->timeout(20)->get($url);
+            ])->connectTimeout(6)->timeout(12)->get($url);
         } catch (\Throwable $e) {
             return ['url' => $url, 'ok' => false, 'error' => '无法访问该网址：' . $e->getMessage(), 'score' => 0, 'summary' => [], 'groups' => []];
         }
@@ -50,11 +50,17 @@ class SiteAuditService
         libxml_clear_errors();
         $xp = new \DOMXPath($dom);
 
-        // 3) 旁路资源（robots / sitemap / llms.txt）
-        $robots = $this->fetchText($origin . '/robots.txt');
-        $hasLlms = $this->urlExists($origin . '/llms.txt');
+        // 3) 旁路资源（robots / llms.txt / sitemap.xml）——并发抓取，把 3 次串行压成 1 次
+        $ua = ['User-Agent' => 'GEO-SaaS-Audit/1.0'];
+        $pool = Http::pool(fn ($p) => [
+            $p->as('robots')->connectTimeout(4)->timeout(6)->withHeaders($ua)->get($origin . '/robots.txt'),
+            $p->as('llms')->connectTimeout(4)->timeout(6)->withHeaders($ua)->get($origin . '/llms.txt'),
+            $p->as('sitemap')->connectTimeout(4)->timeout(6)->withHeaders($ua)->get($origin . '/sitemap.xml'),
+        ]);
+        $robots = $this->bodyOf($pool['robots'] ?? null);
+        $hasLlms = $this->exists($pool['llms'] ?? null);
         $sitemapInRobots = $robots !== null && preg_match('/^\s*sitemap:/im', $robots) === 1;
-        $hasSitemap = $sitemapInRobots || $this->urlExists($origin . '/sitemap.xml');
+        $hasSitemap = $sitemapInRobots || $this->exists($pool['sitemap'] ?? null);
         $blockedBots = $robots !== null ? $this->blockedAiBots($robots) : [];
 
         // 4) 跑检查
@@ -284,23 +290,14 @@ class SiteAuditService
         return $origin;
     }
 
-    private function fetchText(string $url): ?string
+    /** Http::pool 里失败的请求会返回异常对象而非抛出，这里安全取值。*/
+    private function bodyOf($resp): ?string
     {
-        try {
-            $r = Http::withHeaders(['User-Agent' => 'GEO-SaaS-Audit/1.0'])->timeout(10)->get($url);
-            return $r->ok() ? (string) $r->body() : null;
-        } catch (\Throwable $e) {
-            return null;
-        }
+        return $resp instanceof \Illuminate\Http\Client\Response && $resp->ok() ? (string) $resp->body() : null;
     }
 
-    private function urlExists(string $url): bool
+    private function exists($resp): bool
     {
-        try {
-            $r = Http::withHeaders(['User-Agent' => 'GEO-SaaS-Audit/1.0'])->timeout(10)->get($url);
-            return $r->ok() && trim((string) $r->body()) !== '';
-        } catch (\Throwable $e) {
-            return false;
-        }
+        return $resp instanceof \Illuminate\Http\Client\Response && $resp->ok() && trim((string) $resp->body()) !== '';
     }
 }
