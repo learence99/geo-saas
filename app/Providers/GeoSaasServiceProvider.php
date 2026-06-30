@@ -21,5 +21,18 @@ class GeoSaasServiceProvider extends ServiceProvider
             ->prefix($prefix)
             ->name('admin.')
             ->group(base_path('routes/geo_saas.php'));
+
+        // ===== 临时诊断（公开，无需登录）：量 php-fpm 网页请求做出站 HTTP 是否卡。定位完即删。=====
+        Route::middleware('web')->get('geo-diag', function () {
+            $r = ['sapi' => PHP_SAPI];
+            $t = microtime(true);
+            try {
+                $resp = \Illuminate\Support\Facades\Http::timeout(10)->get('https://www.baidu.com');
+                $r['http_baidu'] = $resp->status() . ' / ' . round(microtime(true) - $t, 2) . 's';
+            } catch (\Throwable $e) {
+                $r['http_baidu'] = 'ERR ' . round(microtime(true) - $t, 2) . 's: ' . $e->getMessage();
+            }
+            return response()->json($r);
+        });
     }
 }
