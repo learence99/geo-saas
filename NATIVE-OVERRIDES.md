@@ -42,6 +42,29 @@
   - 侧栏 `subMap` 新增 `admin.enterprise-knowledge.*` → 'materials' 高亮。
   - `whitelabel.sh` 新增第④步：精确替换企业知识库 AI 系统提示词里的 "GEOFlow"。
 
+## 服务器并发修复（关键基建，2026-06-30）
+**问题**：GEOFlow 默认用 `php artisan serve`（PHP 内置**单进程**开发服务器）跑生产。任何慢请求（体检抓站、测 AI key 等出站 HTTP）会**霸占唯一进程**，导致其它请求全部排队卡死。命令行/curl 正常、浏览器一卡一片，就是这个原因。
+
+**修复**（改 `/opt/GEOFlow`，不在本仓库——重建后需重做）：
+1. `docker-compose.yml` 的 `app` 服务加：
+   ```yaml
+   environment:
+     PHP_CLI_SERVER_WORKERS: "10"
+   command: ["sh", "-c", "exec php -S 0.0.0.0:8080 serve-router.php"]
+   ```
+   （`artisan serve` **不透传** `PHP_CLI_SERVER_WORKERS`，必须直接 `php -S`；Laravel 11 删了 `server.php`，故用自建路由。）
+2. 根目录建 `serve-router.php`（php -S 的 Laravel 路由）：
+   ```php
+   <?php
+   $p=parse_url($_SERVER["REQUEST_URI"],PHP_URL_PATH);
+   if($p!=="/"&&is_file(__DIR__."/public".$p))return false;
+   require __DIR__."/public/index.php";
+   ```
+3. `docker compose up -d --force-recreate app`。
+4. 验证：3 个并发请求总耗时从 ~4s 降到 ~1.7s（并行）。
+
+**商用前正式优化**：把 `php -S` 升级为 **Laravel Octane（FrankenPHP/Swoole）** 或 php-fpm+nginx（注意当前镜像是 `php:8.4-cli`，无 fpm，需改 Dockerfile）。worker 数按内存调（每 worker 约几十 MB）。
+
 ## 行业策略的唯一来源
 所有"行业不同的 prompt / 词表 / 阈值 / 合规"集中在 `config/geo_packs.php`。
 加行业 = 加一个 slug；调 prompt = 改这个文件——**不碰原生代码**。
