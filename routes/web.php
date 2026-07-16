@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\AiModelController;
 use App\Http\Controllers\Admin\AiPromptController;
 use App\Http\Controllers\Admin\AiSpecialPromptController;
 use App\Http\Controllers\Admin\AnalyticsController;
+use App\Http\Controllers\Admin\GeoAuditController;
 use App\Http\Controllers\Admin\ApiTokenController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\ArticleEditorAssetController;
@@ -313,6 +314,14 @@ Route::prefix($adminPrefix)->name('admin.')->middleware(['admin.locale'])->group
             Route::get('ai-special-prompts', [AiSpecialPromptController::class, 'index'])->name('ai-special-prompts');
             Route::post('ai-special-prompts/keyword', [AiSpecialPromptController::class, 'updateKeyword'])->name('ai-special-prompts.keyword');
             Route::post('ai-special-prompts/description', [AiSpecialPromptController::class, 'updateDescription'])->name('ai-special-prompts.description');
+        });
+
+        // GEO 审计（geo-optimizer-skill 技术审计）
+        Route::prefix('geo-audits')->name('geo-audits.')->group(function () {
+            Route::get('/', [GeoAuditController::class, 'index'])->name('index');
+            Route::post('/', [GeoAuditController::class, 'store'])->name('store');
+            Route::get('{geoAudit}', [GeoAuditController::class, 'show'])->name('show')->whereNumber('geoAudit');
+            Route::post('{geoAudit}/delete', [GeoAuditController::class, 'destroy'])->name('delete')->whereNumber('geoAudit');
         });
 
         Route::prefix('site-settings')->name('site-settings.')->group(function () {
