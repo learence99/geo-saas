@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\AiPromptController;
 use App\Http\Controllers\Admin\AiSpecialPromptController;
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\GeoAuditController;
+use App\Http\Controllers\Admin\GeoCitationController;
 use App\Http\Controllers\Admin\ApiTokenController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\ArticleEditorAssetController;
@@ -322,6 +323,15 @@ Route::prefix($adminPrefix)->name('admin.')->middleware(['admin.locale'])->group
             Route::post('/', [GeoAuditController::class, 'store'])->name('store');
             Route::get('{geoAudit}', [GeoAuditController::class, 'show'])->name('show')->whereNumber('geoAudit');
             Route::post('{geoAudit}/delete', [GeoAuditController::class, 'destroy'])->name('delete')->whereNumber('geoAudit');
+        });
+
+        // AI 品牌引用检测（geo-optimizer-skill citations，需 Perplexity API Key，产生真实调用费用）
+        Route::prefix('geo-citations')->name('geo-citations.')->group(function () {
+            Route::get('/', [GeoCitationController::class, 'index'])->name('index');
+            Route::post('/', [GeoCitationController::class, 'store'])->name('store');
+            Route::post('settings', [GeoCitationController::class, 'updateSettings'])->name('settings');
+            Route::get('{geoCitation}', [GeoCitationController::class, 'show'])->name('show')->whereNumber('geoCitation');
+            Route::post('{geoCitation}/delete', [GeoCitationController::class, 'destroy'])->name('delete')->whereNumber('geoCitation');
         });
 
         Route::prefix('site-settings')->name('site-settings.')->group(function () {
