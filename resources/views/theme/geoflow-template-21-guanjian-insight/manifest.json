@@ -1,0 +1,29 @@
+{
+    "id": "geoflow-template-21-guanjian-insight",
+    "name": "GEOFlow 21 GuanJian Insight",
+    "version": "1.0.0",
+    "description": "A warm editorial magazine variant with cream backgrounds, deep navy headings, serif titles and a terracotta accent color. Preserves GEOFlow frontend data contracts.",
+    "templates": [
+        "layout",
+        "home",
+        "category",
+        "article"
+    ],
+    "variant_number": 21,
+    "reference_site": "观见 (GuanJian Insight) content platform concept",
+    "reference_url": "",
+    "notes": [
+        "Generated from a user-supplied offline design mockup (观见 内容平台). Reproduces its color system and editorial layout using GEOFlow's real article/category/author data.",
+        "Keeps GEOFlow Blade variables, SEO meta fields, JSON-LD schema output, category navigation, article routes, and markdown HTML rendering intact.",
+        "The mockup's 'likes/comments/follow-author' interactions are not part of GEOFlow's public data contract and were omitted; visuals are limited to layout, typography and color."
+    ],
+    "base_theme_id": "geoflow-template-01-ink-editorial",
+    "target_theme_id": "geoflow-template-21-guanjian-insight",
+    "mode": "theme_variant",
+    "session_state": "published",
+    "preview_routes": [
+        "/",
+        "/category/{slug}",
+        "/article/{slug}"
+    ]
+}

@@ -110,108 +110,34 @@
         $resolvedActive = $subMap[$routeName];
     }
 @endphp
-<nav class="bg-white shadow-sm border-b">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex h-16 items-center gap-3 lg:gap-4 min-w-0">
-            <a href="{{ route('admin.dashboard') }}" class="shrink-0 text-lg sm:text-xl font-semibold text-gray-900">{{ $adminBrandName }}</a>
-            <nav class="hidden md:flex flex-1 min-w-0 items-center">
-                <div class="flex w-full min-w-0 items-center gap-3 lg:gap-5 overflow-x-auto overscroll-x-contain py-2 -my-2 [scrollbar-width:thin]">
-                    @foreach ($menu as $key => $item)
-                        <a href="{{ route($item['route']) }}"
-                           class="@if($resolvedActive === $key) text-blue-600 font-medium @else text-gray-500 hover:text-gray-700 @endif shrink-0 whitespace-nowrap text-[15px] transition-colors duration-200">
-                            {{ $item['name'] }}
-                        </a>
-                    @endforeach
-                </div>
-            </nav>
-            <div class="flex shrink-0 items-center gap-2 sm:gap-3 ml-auto">
-                <div class="relative">
-                    <button onclick="toggleAdminNotifications()" class="relative rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors duration-200" type="button" aria-label="{{ __('admin.header.notifications.label') }}" title="{{ __('admin.header.notifications.label') }}">
-                        <i data-lucide="bell" class="w-5 h-5"></i>
-                        @if($hasVersionUpdate)
-                            <span data-update-indicator class="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white"></span>
-                        @endif
-                    </button>
+<aside class="gf-side">
+    <div class="gf-brand">
+        <div class="gf-logo">{{ mb_substr($adminBrandName, 0, 1) }}</div>
+        <div>
+            <b>{{ $adminBrandName }}</b>
+            <span>{{ __('admin.nav.dashboard') }}</span>
+        </div>
+    </div>
 
-                    <div id="admin-notification-menu" class="hidden absolute right-0 mt-3 w-80 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl z-50">
-                        <div class="border-b border-gray-100 px-4 py-3">
-                            <div class="flex items-center justify-between gap-3">
-                                <div class="text-sm font-semibold text-gray-900">{{ __('admin.header.notifications.title') }}</div>
-                                @if($hasVersionUpdate)
-                                    <span class="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-600">{{ __('admin.header.notifications.badge_new') }}</span>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="px-4 py-4">
-                            @if($hasVersionUpdate)
-                                <div class="text-sm font-semibold text-gray-900">
-                                    {{ __('admin.header.notifications.update_available', ['version' => (string) ($updateState['latest_version'] ?? '')]) }}
-                                </div>
-                                <p class="mt-2 text-sm leading-6 text-gray-600">{{ __('admin.header.notifications.update_desc') }}</p>
-                                @if($updateSummary !== '')
-                                    <p class="mt-2 text-sm leading-6 text-gray-600">{{ $updateSummary }}</p>
-                                @endif
-                            @elseif($notificationStatus === 'current')
-                                <div class="text-sm font-semibold text-gray-900">{{ __('admin.header.notifications.up_to_date') }}</div>
-                                <p class="mt-2 text-sm leading-6 text-gray-600">{{ __('admin.header.notifications.no_update_desc') }}</p>
-                            @elseif($notificationStatus === 'disabled')
-                                <div class="text-sm font-semibold text-gray-900">{{ __('admin.header.notifications.disabled') }}</div>
-                                <p class="mt-2 text-sm leading-6 text-gray-600">{{ __('admin.header.notifications.disabled_desc') }}</p>
-                            @else
-                                <div class="text-sm font-semibold text-gray-900">{{ __('admin.header.notifications.unavailable') }}</div>
-                                <p class="mt-2 text-sm leading-6 text-gray-600">{{ __('admin.header.notifications.unavailable_desc') }}</p>
-                            @endif
+    <nav class="flex flex-col">
+        @foreach ($menu as $key => $item)
+            <a href="{{ route($item['route']) }}" class="gf-nav-link @if($resolvedActive === $key) active @endif">
+                {{ $item['name'] }}
+            </a>
+        @endforeach
+    </nav>
 
-                            <div class="mt-4 space-y-1 rounded-xl bg-gray-50 px-3 py-3 text-xs text-gray-500">
-                                <div>{{ __('admin.header.notifications.current_version', ['version' => (string) ($updateState['current_version'] ?? config('geoflow.app_version', '2.0'))]) }}</div>
-                                @if(!empty($updateState['latest_version']))
-                                    <div>{{ __('admin.header.notifications.latest_version', ['version' => (string) $updateState['latest_version']]) }}</div>
-                                @endif
-                                <div>{{ __('admin.header.notifications.daily_check') }}</div>
-                                @if(!empty($updateState['checked_at']))
-                                    <div>{{ __('admin.header.notifications.checked_at', ['time' => (string) $updateState['checked_at']]) }}</div>
-                                @endif
-                            </div>
-
-                            <div class="mt-4 flex flex-wrap gap-2">
-                                @if($isUpdateCenterEnabled && $isSuperAdmin)
-                                    <a href="{{ $notificationUpdateCenterUrl }}" class="inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-700">
-                                        {{ __('admin.header.notifications.open_update_center') }}
-                                    </a>
-                                @endif
-                                <a href="{{ $notificationChangelogUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-700">
-                                    {{ __('admin.header.notifications.view_changelog') }}
-                                </a>
-                                <a href="{{ $notificationGithubUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50">
-                                    {{ __('admin.header.notifications.open_github') }}
-                                </a>
-                            </div>
+    <div class="mt-4 pt-4" style="border-top:1px solid rgba(255,255,255,.14)">
+                <div class="relative mt-2">
+                    <button onclick="toggleUserMenu()" class="gf-nav-link w-full" type="button">
+                        <div class="w-7 h-7 bg-white/15 rounded-full flex items-center justify-center">
+                            <i data-lucide="user" class="w-4 h-4"></i>
                         </div>
-                    </div>
-                </div>
-                <div class="hidden md:flex items-center rounded-lg border border-gray-200 bg-white px-2 py-1 shadow-sm">
-                    <i data-lucide="languages" class="w-4 h-4 text-gray-400 mr-1.5"></i>
-                    <select
-                        class="admin-locale-select appearance-none bg-transparent pr-5 text-sm font-medium text-gray-700 outline-none cursor-pointer"
-                        aria-label="{{ __('admin.header.language') }}"
-                        onchange="if (this.value) window.location.href = this.value"
-                    >
-                        @foreach (\App\Support\AdminWeb::supportedLocales() as $localeCode => $localeLabel)
-                            <option value="{{ route('admin.locale.switch', ['locale' => $localeCode]) }}" @selected(app()->getLocale() === $localeCode)>
-                                {{ $localeLabel }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="relative">
-                    <button onclick="toggleUserMenu()" class="flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200" type="button">
-                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                            <i data-lucide="user" class="w-4 h-4 text-blue-600"></i>
-                        </div>
+                        <span class="flex-1 text-left">{{ $currentAdmin->username ?? '' }}</span>
                         <i data-lucide="chevron-down" class="w-4 h-4"></i>
                     </button>
 
-                    <div id="user-menu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50">
+                    <div id="user-menu" class="hidden absolute left-0 bottom-full mb-2 w-56 bg-white rounded-md shadow-lg py-1 z-50">
                         <div class="px-4 py-2 border-b border-gray-100">
                             <div class="text-sm text-gray-700">{{ __('admin.header.welcome', ['name' => $currentAdmin->username ?? '']) }}</div>
                             <div class="text-xs text-gray-400">{{ $adminRoleLabel }}</div>
@@ -248,26 +174,8 @@
                         </form>
                     </div>
                 </div>
-            </div>
         </div>
-    </div>
-
-    <div id="mobile-menu" class="hidden md:hidden">
-        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gray-50 border-t">
-            @foreach ($menu as $key => $item)
-                <a href="{{ route($item['route']) }}"
-                   class="@if($resolvedActive === $key) bg-blue-100 text-blue-600 @else text-gray-600 hover:bg-gray-100 @endif block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">
-                    {{ $item['name'] }}
-                </a>
-            @endforeach
-        </div>
-    </div>
-</nav>
-<div class="md:hidden fixed top-4 right-4 z-50">
-    <button onclick="toggleMobileMenu()" class="bg-white p-2 rounded-md shadow-md" type="button">
-        <i data-lucide="menu" class="w-5 h-5 text-gray-600"></i>
-    </button>
-</div>
+</aside>
 
 <style>
     .admin-locale-select {
@@ -286,32 +194,10 @@
         }
     }
 
-    function toggleAdminNotifications() {
-        const menu = document.getElementById('admin-notification-menu');
-        if (menu) {
-            menu.classList.toggle('hidden');
-        }
-    }
-
-    function toggleMobileMenu() {
-        const menu = document.getElementById('mobile-menu');
-        if (menu) {
-            menu.classList.toggle('hidden');
-        }
-    }
-
     document.addEventListener('click', function (event) {
         const userMenu = document.getElementById('user-menu');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const notificationMenu = document.getElementById('admin-notification-menu');
         if (userMenu && !event.target.closest('[onclick="toggleUserMenu()"]') && !userMenu.contains(event.target)) {
             userMenu.classList.add('hidden');
-        }
-        if (notificationMenu && !event.target.closest('[onclick="toggleAdminNotifications()"]') && !notificationMenu.contains(event.target)) {
-            notificationMenu.classList.add('hidden');
-        }
-        if (mobileMenu && !event.target.closest('[onclick="toggleMobileMenu()"]') && !mobileMenu.contains(event.target)) {
-            mobileMenu.classList.add('hidden');
         }
     });
 </script>

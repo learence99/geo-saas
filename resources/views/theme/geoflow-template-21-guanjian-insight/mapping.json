@@ -1,0 +1,38 @@
+{
+    "id": "geoflow-template-21-guanjian-insight",
+    "base_theme_id": "geoflow-template-01-ink-editorial",
+    "reference_urls": {
+        "home": "",
+        "category": "",
+        "article": ""
+    },
+    "unchanged_contracts": [
+        "public routes",
+        "SEO title/description/keywords/canonical",
+        "JSON-LD schema output",
+        "GEOFlow category/article variables",
+        "rendered article HTML",
+        "optional article detail ad data"
+    ],
+    "visual_strategy": {
+        "reference_site": "User-supplied 观见 offline design mockup",
+        "summary": "A warm cream-and-navy editorial magazine variant with a split hero, serif headlines and a terracotta accent color.",
+        "css_focus": "Typography, color tokens, hero split layout, card rhythm, sticky blurred header, and article prose styling."
+    },
+    "edited_files": [
+        "layout.blade.php",
+        "home.blade.php",
+        "category.blade.php",
+        "article.blade.php",
+        "partials/header.blade.php",
+        "partials/sidebar.blade.php",
+        "partials/footer.blade.php",
+        "partials/article-card.blade.php",
+        "assets/theme.css",
+        "manifest.json",
+        "tokens.json",
+        "mapping.json",
+        "public/themes/geoflow-template-21-guanjian-insight/theme.css",
+        "public/themes/geoflow-template-21-guanjian-insight/theme.js"
+    ]
+}
