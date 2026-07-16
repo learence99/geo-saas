@@ -23,7 +23,7 @@ class GeoMonitorController extends Controller
 
         return view('admin.geo-monitors.index', [
             'pageTitle' => 'AI 可见度监控',
-            'activeMenu' => 'geo_monitor',
+            'activeMenu' => 'geo_tools',
             'monitors' => $monitors,
             'latest' => $latest,
             'defaultDomain' => $defaultDomain,
@@ -36,7 +36,7 @@ class GeoMonitorController extends Controller
 
         return view('admin.geo-monitors.show', [
             'pageTitle' => 'AI 可见度监控详情',
-            'activeMenu' => 'geo_monitor',
+            'activeMenu' => 'geo_tools',
             'monitor' => $monitor,
         ]);
     }

@@ -23,7 +23,7 @@ class GeoAuditController extends Controller
 
         return view('admin.geo-audits.index', [
             'pageTitle' => 'GEO 审计',
-            'activeMenu' => 'geo_audit',
+            'activeMenu' => 'geo_tools',
             'audits' => $audits,
             'latest' => $latest,
             'defaultUrl' => $defaultUrl,
@@ -36,7 +36,7 @@ class GeoAuditController extends Controller
 
         return view('admin.geo-audits.show', [
             'pageTitle' => 'GEO 审计详情',
-            'activeMenu' => 'geo_audit',
+            'activeMenu' => 'geo_tools',
             'audit' => $audit,
         ]);
     }

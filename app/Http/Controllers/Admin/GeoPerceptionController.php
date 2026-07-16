@@ -23,7 +23,7 @@ class GeoPerceptionController extends Controller
 
         return view('admin.geo-perceptions.index', [
             'pageTitle' => 'AI 认知快照',
-            'activeMenu' => 'geo_perception',
+            'activeMenu' => 'geo_tools',
             'perceptions' => $perceptions,
             'latest' => $latest,
             'defaultUrl' => $defaultUrl,
@@ -36,7 +36,7 @@ class GeoPerceptionController extends Controller
 
         return view('admin.geo-perceptions.show', [
             'pageTitle' => 'AI 认知快照详情',
-            'activeMenu' => 'geo_perception',
+            'activeMenu' => 'geo_tools',
             'perception' => $perception,
         ]);
     }

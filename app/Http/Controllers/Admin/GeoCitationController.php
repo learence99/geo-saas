@@ -40,7 +40,7 @@ class GeoCitationController extends Controller
 
         return view('admin.geo-citations.index', [
             'pageTitle' => 'AI 品牌引用检测',
-            'activeMenu' => 'geo_citations',
+            'activeMenu' => 'geo_tools',
             'citations' => $citations,
             'latest' => $latest,
             'apiKeyMasked' => $storedKey === '' ? '' : $this->maskedStoredKey(),
@@ -58,7 +58,7 @@ class GeoCitationController extends Controller
 
         return view('admin.geo-citations.show', [
             'pageTitle' => 'AI 品牌引用检测详情',
-            'activeMenu' => 'geo_citations',
+            'activeMenu' => 'geo_tools',
             'citation' => $citation,
         ]);
     }

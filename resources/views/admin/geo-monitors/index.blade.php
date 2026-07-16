@@ -2,6 +2,7 @@
 
 @section('content')
     <div class="px-4 sm:px-0">
+        @include('admin.partials.geo-tools-tabs')
         <div class="flex items-center justify-between mb-8">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">AI 可见度监控</h1>

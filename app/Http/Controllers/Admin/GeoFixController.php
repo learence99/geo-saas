@@ -34,7 +34,7 @@ class GeoFixController extends Controller
 
         return view('admin.geo-fixes.index', [
             'pageTitle' => 'GEO 修复建议',
-            'activeMenu' => 'geo_fix',
+            'activeMenu' => 'geo_tools',
             'fixes' => $fixes,
             'latest' => $latest,
             'defaultUrl' => $defaultUrl,
@@ -48,7 +48,7 @@ class GeoFixController extends Controller
 
         return view('admin.geo-fixes.show', [
             'pageTitle' => 'GEO 修复详情',
-            'activeMenu' => 'geo_fix',
+            'activeMenu' => 'geo_tools',
             'fix' => $fix,
         ]);
     }
