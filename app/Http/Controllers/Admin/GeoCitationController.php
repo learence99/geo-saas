@@ -17,7 +17,18 @@ class GeoCitationController extends Controller
 {
     private const PYTHON_BIN = '/opt/geo-optimizer-venv/bin/geo';
 
-    private const SETTING_KEY = 'geo_citations_perplexity_api_key';
+    private const SETTING_KEY_PROVIDER = 'geo_citations_provider';
+
+    private const SETTING_KEY_API_KEY = 'geo_citations_api_key';
+
+    private const PROVIDER_ENV_KEYS = [
+        'openai' => 'OPENAI_API_KEY',
+        'anthropic' => 'ANTHROPIC_API_KEY',
+        'groq' => 'GROQ_API_KEY',
+        'perplexity' => 'PERPLEXITY_API_KEY',
+    ];
+
+    private const DEFAULT_PROVIDER = 'openai';
 
     public function __construct(private readonly ApiKeyCrypto $apiKeyCrypto) {}
 
@@ -34,6 +45,8 @@ class GeoCitationController extends Controller
             'latest' => $latest,
             'apiKeyMasked' => $storedKey === '' ? '' : $this->maskedStoredKey(),
             'hasApiKey' => $storedKey !== '',
+            'currentProvider' => $this->storedProvider(),
+            'providers' => array_keys(self::PROVIDER_ENV_KEYS),
             'defaultDomain' => parse_url((string) config('app.url'), PHP_URL_HOST) ?: '',
             'defaultBrand' => (string) \App\Support\AdminWeb::siteName(),
         ]);
@@ -53,12 +66,18 @@ class GeoCitationController extends Controller
     public function updateSettings(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'perplexity_api_key' => ['required', 'string', 'max:500'],
+            'provider' => ['required', 'string', 'in:'.implode(',', array_keys(self::PROVIDER_ENV_KEYS))],
+            'api_key' => ['required', 'string', 'max:500'],
         ]);
 
         SiteSetting::updateOrCreate(
-            ['setting_key' => self::SETTING_KEY],
-            ['setting_value' => $this->apiKeyCrypto->encrypt($validated['perplexity_api_key'])]
+            ['setting_key' => self::SETTING_KEY_PROVIDER],
+            ['setting_value' => $validated['provider']]
+        );
+
+        SiteSetting::updateOrCreate(
+            ['setting_key' => self::SETTING_KEY_API_KEY],
+            ['setting_value' => $this->apiKeyCrypto->encrypt($validated['api_key'])]
         );
 
         return redirect()
@@ -75,10 +94,11 @@ class GeoCitationController extends Controller
         ]);
 
         $apiKey = $this->storedApiKey();
+        $provider = $this->storedProvider();
         if ($apiKey === '') {
             return redirect()
                 ->route('admin.geo-citations.index')
-                ->withErrors(['perplexity_api_key' => '请先在下方配置 Perplexity API Key 后再发起检测']);
+                ->withErrors(['api_key' => '请先在下方配置 API Key 后再发起检测']);
         }
 
         $citation = GeoCitation::create([
@@ -95,6 +115,7 @@ class GeoCitationController extends Controller
                 'citations',
                 '--brand', $validated['brand'],
                 '--domain', $validated['domain'],
+                '--provider', $provider,
                 '--format', 'json',
             ];
             if (!empty($validated['topic'])) {
@@ -102,7 +123,8 @@ class GeoCitationController extends Controller
                 $args[] = $validated['topic'];
             }
 
-            $process = new Process($args, null, ['PERPLEXITY_API_KEY' => $apiKey]);
+            $envKey = self::PROVIDER_ENV_KEYS[$provider] ?? self::PROVIDER_ENV_KEYS[self::DEFAULT_PROVIDER];
+            $process = new Process($args, null, [$envKey => $apiKey]);
             $process->setTimeout(120);
             $process->run();
 
@@ -117,7 +139,7 @@ class GeoCitationController extends Controller
             }
 
             $citation->update([
-                'provider' => 'perplexity',
+                'provider' => $provider,
                 'verdict' => $result['verdict'] ?? null,
                 'queries_run' => $result['queries_run'] ?? 0,
                 'brand_mention_rate' => (int) round((float) ($result['brand_mention_rate'] ?? 0) * 100),
@@ -151,7 +173,7 @@ class GeoCitationController extends Controller
 
     private function storedApiKey(): string
     {
-        $setting = SiteSetting::where('setting_key', self::SETTING_KEY)->first();
+        $setting = SiteSetting::where('setting_key', self::SETTING_KEY_API_KEY)->first();
         if (!$setting || !$setting->setting_value) {
             return '';
         }
@@ -161,11 +183,19 @@ class GeoCitationController extends Controller
 
     private function maskedStoredKey(): string
     {
-        $setting = SiteSetting::where('setting_key', self::SETTING_KEY)->first();
+        $setting = SiteSetting::where('setting_key', self::SETTING_KEY_API_KEY)->first();
         if (!$setting || !$setting->setting_value) {
             return '';
         }
 
         return $this->apiKeyCrypto->mask((string) $setting->setting_value);
+    }
+
+    private function storedProvider(): string
+    {
+        $setting = SiteSetting::where('setting_key', self::SETTING_KEY_PROVIDER)->first();
+        $provider = $setting?->setting_value ? (string) $setting->setting_value : self::DEFAULT_PROVIDER;
+
+        return array_key_exists($provider, self::PROVIDER_ENV_KEYS) ? $provider : self::DEFAULT_PROVIDER;
     }
 }

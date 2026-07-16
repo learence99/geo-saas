@@ -5,7 +5,7 @@
         <div class="flex items-center justify-between mb-8">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">AI 品牌引用检测</h1>
-                <p class="mt-1 text-sm text-gray-600">向真实的 AI 答案引擎（Perplexity Sonar）提问，检测它是否提及你的品牌、是否把你的域名作为引用来源。每次检测会调用你配置的 API Key，产生真实费用。</p>
+                <p class="mt-1 text-sm text-gray-600">向真实的 AI 答案引擎提问，检测它是否提及你的品牌、是否把你的域名作为引用来源。每次检测会调用你配置的 API Key，产生真实费用。</p>
             </div>
         </div>
 
@@ -31,20 +31,25 @@
             <div class="px-6 py-5">
                 <form method="POST" action="{{ route('admin.geo-citations.settings') }}" class="flex flex-col sm:flex-row gap-3">
                     @csrf
+                    <select name="provider" class="border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        @foreach ($providers as $p)
+                            <option value="{{ $p }}" @selected($currentProvider === $p)>{{ strtoupper($p) }}</option>
+                        @endforeach
+                    </select>
                     <input
                         type="password"
-                        name="perplexity_api_key"
-                        placeholder="{{ $hasApiKey ? '已配置：'.$apiKeyMasked.'（输入新值可覆盖）' : 'pplx-xxxxxxxxxxxxxxxx' }}"
+                        name="api_key"
+                        placeholder="{{ $hasApiKey ? '已配置：'.$apiKeyMasked.'（输入新值可覆盖）' : 'sk-xxxxxxxxxxxxxxxx' }}"
                         class="flex-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     >
                     <button type="submit" class="inline-flex items-center justify-center px-5 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900 whitespace-nowrap">
-                        保存 Key
+                        保存
                     </button>
                 </form>
                 <p class="mt-3 text-xs text-gray-500">
-                    Perplexity API Key 可在
-                    <a href="https://www.perplexity.ai/settings/api" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-700">perplexity.ai/settings/api</a>
-                    获取。推荐 Perplexity，因为它基于实时联网搜索，能返回真实引用来源；不配置则无法发起检测。
+                    默认使用 OpenAI（parametric 模型，只能判断 AI 是否"知道"你的品牌，不返回真实引用来源）。
+                    如需真实网页引用来源，推荐切换到 Perplexity（<a href="https://www.perplexity.ai/settings/api" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-700">perplexity.ai/settings/api</a>）。
+                    OpenAI Key 可在 <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-700">platform.openai.com/api-keys</a> 获取。不配置则无法发起检测。
                 </p>
             </div>
         </div>
