@@ -14,6 +14,9 @@ use App\Http\Controllers\Admin\AiSpecialPromptController;
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\GeoAuditController;
 use App\Http\Controllers\Admin\GeoCitationController;
+use App\Http\Controllers\Admin\GeoFixController;
+use App\Http\Controllers\Admin\GeoPerceptionController;
+use App\Http\Controllers\Admin\GeoMonitorController;
 use App\Http\Controllers\Admin\ApiTokenController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\ArticleEditorAssetController;
@@ -332,6 +335,30 @@ Route::prefix($adminPrefix)->name('admin.')->middleware(['admin.locale'])->group
             Route::post('settings', [GeoCitationController::class, 'updateSettings'])->name('settings');
             Route::get('{geoCitation}', [GeoCitationController::class, 'show'])->name('show')->whereNumber('geoCitation');
             Route::post('{geoCitation}/delete', [GeoCitationController::class, 'destroy'])->name('delete')->whereNumber('geoCitation');
+        });
+
+        // GEO 修复建议（geo-optimizer-skill fix，免费技术检测，不调用 AI API）
+        Route::prefix('geo-fixes')->name('geo-fixes.')->group(function () {
+            Route::get('/', [GeoFixController::class, 'index'])->name('index');
+            Route::post('/', [GeoFixController::class, 'store'])->name('store');
+            Route::get('{geoFix}', [GeoFixController::class, 'show'])->name('show')->whereNumber('geoFix');
+            Route::post('{geoFix}/delete', [GeoFixController::class, 'destroy'])->name('delete')->whereNumber('geoFix');
+        });
+
+        // AI 认知快照（geo-optimizer-skill perception，确定性推算，不调用 AI API）
+        Route::prefix('geo-perceptions')->name('geo-perceptions.')->group(function () {
+            Route::get('/', [GeoPerceptionController::class, 'index'])->name('index');
+            Route::post('/', [GeoPerceptionController::class, 'store'])->name('store');
+            Route::get('{geoPerception}', [GeoPerceptionController::class, 'show'])->name('show')->whereNumber('geoPerception');
+            Route::post('{geoPerception}/delete', [GeoPerceptionController::class, 'destroy'])->name('delete')->whereNumber('geoPerception');
+        });
+
+        // AI 可见度监控（geo-optimizer-skill monitor，免费技术检测，不调用 AI API）
+        Route::prefix('geo-monitors')->name('geo-monitors.')->group(function () {
+            Route::get('/', [GeoMonitorController::class, 'index'])->name('index');
+            Route::post('/', [GeoMonitorController::class, 'store'])->name('store');
+            Route::get('{geoMonitor}', [GeoMonitorController::class, 'show'])->name('show')->whereNumber('geoMonitor');
+            Route::post('{geoMonitor}/delete', [GeoMonitorController::class, 'destroy'])->name('delete')->whereNumber('geoMonitor');
         });
 
         Route::prefix('site-settings')->name('site-settings.')->group(function () {

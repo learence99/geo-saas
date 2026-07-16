@@ -28,6 +28,9 @@
         'ai_config' => ['route' => 'admin.ai.configurator', 'name' => __('admin.nav.ai_config')],
         'geo_audit' => ['route' => 'admin.geo-audits.index', 'name' => 'GEO审计'],
         'geo_citations' => ['route' => 'admin.geo-citations.index', 'name' => 'AI引用检测'],
+        'geo_fix' => ['route' => 'admin.geo-fixes.index', 'name' => 'GEO修复'],
+        'geo_perception' => ['route' => 'admin.geo-perceptions.index', 'name' => 'AI认知快照'],
+        'geo_monitor' => ['route' => 'admin.geo-monitors.index', 'name' => 'AI可见度监控'],
         'site_settings' => ['route' => 'admin.site-settings.index', 'name' => __('admin.nav.site_settings')],
     ];
     if ($isSuperAdmin) {
@@ -98,6 +101,9 @@
         'admin.geo-audits.show' => 'geo_audit',
         'admin.geo-citations.show' => 'geo_citations',
         'admin.geo-citations.settings' => 'geo_citations',
+        'admin.geo-fixes.show' => 'geo_fix',
+        'admin.geo-perceptions.show' => 'geo_perception',
+        'admin.geo-monitors.show' => 'geo_monitor',
         'admin.site-settings.sensitive-words' => 'site_settings',
         'admin.site-settings.sensitive-words.store' => 'site_settings',
         'admin.site-settings.sensitive-words.delete' => 'site_settings',
