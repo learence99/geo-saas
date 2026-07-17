@@ -1,7 +1,7 @@
 @php
     $currentAdmin = auth('admin')->user();
     $adminBrandName = $adminBrandName ?? \App\Support\AdminWeb::siteName();
-    $isSuperAdmin = $currentAdmin && method_exists($currentAdmin, 'isSuperAdmin') && $currentAdmin->isSuperAdmin();
+    $isSuperAdmin = $currentAdmin && method_exists($currentAdmin, 'canManageProtectedWorkflows') && $currentAdmin->canManageProtectedWorkflows();
     $adminRoleLabel = $isSuperAdmin ? __('admin.header.super_admin') : __('admin.header.admin');
     $updateNotification = is_array($adminUpdateNotificationPayload ?? null) ? $adminUpdateNotificationPayload : [];
     $updateState = is_array($updateNotification['state'] ?? null) ? $updateNotification['state'] : [];
@@ -29,6 +29,9 @@
         'geo_tools' => ['route' => 'admin.geo-audits.index', 'name' => 'GEO工具'],
         'site_settings' => ['route' => 'admin.site-settings.index', 'name' => __('admin.nav.site_settings')],
     ];
+    if (!$isSuperAdmin) {
+        unset($menu['distribution']);
+    }
     if ($isSuperAdmin) {
         $menu['admin_users'] = ['route' => 'admin.admin-users.index', 'name' => __('admin.nav.admin_users')];
     }
