@@ -96,13 +96,16 @@
                 @endif
             @endif
 
-            @if($featuredArticles->isNotEmpty() && $search === '' && !$category)
+            @php
+                $featuredListArticles = $featuredArticles->reject(fn ($item) => $leadArticle && $item->id === $leadArticle->id)->take(5);
+            @endphp
+            @if($featuredListArticles->isNotEmpty() && $search === '' && !$category)
                 <section class="ne-feed-card">
                     <div class="ne-section-title">
                         <span class="ne-title-row">{{ __('site.home_featured') }}</span>
                     </div>
                     <div class="ne-feed">
-                        @foreach($featuredArticles->take(5) as $article)
+                        @foreach($featuredListArticles as $article)
                             @include('theme.geoflow-template-21-guanjian-insight.partials.article-card', ['article' => $article, 'showFeaturedBadge' => true])
                         @endforeach
                     </div>
