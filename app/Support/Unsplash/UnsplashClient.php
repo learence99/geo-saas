@@ -24,7 +24,10 @@ class UnsplashClient
     }
 
     /**
-     * 按关键词搜索一张横版图片，返回图片 URL、署名信息与 download_location（用于下载打点）。
+     * 按关键词随机取一张横版图片，返回图片 URL、署名信息与 download_location（用于下载打点）。
+     *
+     * 用 /photos/random 而不是 /search/photos：后者对相同查询词总是返回同一张排名第一的
+     * 结果，导致同一分类下的所有文章拿到一模一样的封面图；random 端点会在匹配结果里随机抽取。
      *
      * @return array{url: string, thumb_url: string, credit_name: string, credit_url: string, download_location: string}|null
      */
@@ -37,20 +40,20 @@ class UnsplashClient
 
         $response = Http::withHeaders(['Authorization' => 'Client-ID '.$accessKey])
             ->timeout(15)
-            ->get(self::API_BASE.'/search/photos', [
+            ->get(self::API_BASE.'/photos/random', [
                 'query' => $query,
-                'per_page' => 1,
+                'count' => 1,
                 'orientation' => 'landscape',
                 'content_filter' => 'high',
             ]);
 
         if (!$response->successful()) {
-            Log::warning('Unsplash search failed', ['status' => $response->status(), 'query' => $query]);
+            Log::warning('Unsplash random photo failed', ['status' => $response->status(), 'query' => $query]);
 
             return null;
         }
 
-        $photo = $response->json('results.0');
+        $photo = $response->json('0');
         if (!is_array($photo)) {
             return null;
         }
