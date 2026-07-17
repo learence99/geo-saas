@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Support\Site\ArticleHtmlPresenter;
 use App\Support\Site\SiteSettingsBag;
 use App\Support\Site\SiteThemeViewResolver;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -17,11 +18,18 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class CategoryController extends Controller
 {
-    public function show(string $slug): View
+    private const SORT_OPTIONS = ['latest', 'hot', 'featured'];
+
+    public function show(Request $request, string $slug): View
     {
         $category = Category::query()->where('slug', $slug)->first();
         if (! $category instanceof Category) {
             throw new NotFoundHttpException(__('site.category_not_found'));
+        }
+
+        $sort = (string) $request->query('sort', 'latest');
+        if (! in_array($sort, self::SORT_OPTIONS, true)) {
+            $sort = 'latest';
         }
 
         $map = SiteSettingsBag::all();
@@ -30,10 +38,18 @@ class CategoryController extends Controller
         $siteDescription = (string) ($map['site_description'] ?? config('geoflow.site_description', ''));
         $siteKeywords = (string) ($map['site_keywords'] ?? config('geoflow.site_keywords', ''));
 
-        $articles = Article::query()
+        $articlesQuery = Article::query()
             ->with(['category', 'author'])
             ->published()
-            ->where('category_id', $category->id)
+            ->where('category_id', $category->id);
+
+        if ($sort === 'hot' && Schema::hasColumn('articles', 'view_count')) {
+            $articlesQuery->orderByDesc('view_count');
+        } elseif ($sort === 'featured' && Schema::hasColumn('articles', 'is_featured')) {
+            $articlesQuery->where('is_featured', true);
+        }
+
+        $articles = $articlesQuery
             ->orderByDesc('published_at')
             ->orderByDesc('id')
             ->paginate($perPage)
@@ -68,6 +84,7 @@ class CategoryController extends Controller
             'activeNav' => 'category',
             'category' => $category,
             'articles' => $articles,
+            'currentSort' => $sort,
             'hotArticles' => $hotArticles,
             'cardSummaries' => $summaries,
             'siteTitle' => $siteTitle,

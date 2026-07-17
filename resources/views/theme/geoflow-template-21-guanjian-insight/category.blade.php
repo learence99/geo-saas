@@ -32,6 +32,12 @@
 
 @php
     $categoryArticleCount = is_object($articles ?? null) && method_exists($articles, 'total') ? $articles->total() : collect($articles ?? [])->count();
+    $sortTabs = [
+        'latest' => __('site.sort_latest'),
+        'hot' => __('site.sort_hot'),
+        'featured' => __('site.sort_featured'),
+    ];
+    $activeSort = $currentSort ?? 'latest';
 @endphp
 @section('content')
     <div class="ne-shell ne-layout">
@@ -42,14 +48,20 @@
                     <span>/</span>
                     <span>{{ $category->name }}</span>
                 </nav>
-                <h1 class="ne-page-title">{{ $category->name }}</h1>
-                <p class="ne-page-desc">{{ $categoryArticleCount }} {{ app()->getLocale() === 'en' ? 'articles · updated live' : '篇文章 · 实时更新' }}</p>
+                <div class="ne-category-head-row">
+                    <div>
+                        <h1 class="ne-page-title">{{ $category->name }}</h1>
+                        <p class="ne-page-desc">{{ $categoryArticleCount }} {{ app()->getLocale() === 'en' ? 'articles · updated live' : '篇文章 · 实时更新' }}</p>
+                    </div>
+                    <nav class="ne-sort-tabs" aria-label="{{ __('site.sort_latest') }}/{{ __('site.sort_hot') }}/{{ __('site.sort_featured') }}">
+                        @foreach($sortTabs as $sortKey => $sortLabel)
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => $sortKey, 'page' => null]) }}" class="ne-sort-tab {{ $activeSort === $sortKey ? 'is-active' : '' }}">{{ $sortLabel }}</a>
+                        @endforeach
+                    </nav>
+                </div>
             </div>
 
             <section class="ne-feed-card">
-                <div class="ne-section-title">
-                    <span class="ne-title-row">{{ $category->name }}</span>
-                </div>
                 <div class="ne-feed">
                     @forelse($articles as $article)
                         @include('theme.geoflow-template-21-guanjian-insight.partials.article-card', ['article' => $article])
