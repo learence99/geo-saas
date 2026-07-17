@@ -41,6 +41,7 @@ class WorkerExecutionService
         private readonly DistributionOrchestrator $distributionOrchestrator,
         private readonly ArticleRiskScanner $articleRiskScanner,
         private readonly ArticleWorkflowTransitionService $articleWorkflowTransitionService,
+        private readonly ArticleCoverImageService $articleCoverImageService,
     ) {}
 
     /**
@@ -60,6 +61,7 @@ class WorkerExecutionService
 
         $publishResult = $this->publishDueDraftArticle($task);
         if ($publishResult !== null) {
+            $this->ensureCoverImageBeforeDistribution((int) $publishResult['article_id']);
             $this->distributionOrchestrator->enqueueForArticle((int) $publishResult['article_id']);
 
             return $publishResult;
@@ -275,6 +277,24 @@ class WorkerExecutionService
                 ],
             ];
         });
+    }
+
+    /**
+     * 自动发布放行后、入队分发前，补一张封面图（已有则跳过，不覆盖手动设置的封面）。
+     * 图片获取失败不应该阻断发布和分发，因此只记录日志。
+     */
+    private function ensureCoverImageBeforeDistribution(int $articleId): void
+    {
+        $article = Article::query()->find($articleId);
+        if (! $article) {
+            return;
+        }
+
+        try {
+            $this->articleCoverImageService->ensureCoverImage($article);
+        } catch (Throwable $e) {
+            Log::warning('自动发布封面图获取失败', ['article_id' => $articleId, 'error' => $e->getMessage()]);
+        }
     }
 
     /**
