@@ -13,7 +13,13 @@
     $coverIndex = (int) (($article->category_id ?? $article->id) % 6);
 @endphp
 <article class="ne-article-card">
-    <a href="{{ route('site.article', $article->slug) }}" class="ne-thumb ne-cover-{{ $coverIndex }}" aria-hidden="true">{{ $initial }}</a>
+    <a href="{{ route('site.article', $article->slug) }}" class="ne-thumb ne-cover-{{ $coverIndex }}" aria-hidden="true">
+        @if($article->cover_image_url)
+            <img src="{{ $article->cover_image_url }}" alt="" loading="lazy">
+        @else
+            {{ $initial }}
+        @endif
+    </a>
     <div>
         <div class="ne-card-meta">
             @if(!empty($showFeaturedBadge))

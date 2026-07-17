@@ -58,6 +58,9 @@
                     $leadCategoryName = $leadArticle->category?->name ?? '';
                 @endphp
                 <div class="ne-home-headlines ne-cover-{{ $leadCoverIndex }}">
+                    @if($leadArticle->cover_image_url)
+                        <img src="{{ $leadArticle->cover_image_url }}" alt="" loading="lazy">
+                    @endif
                     <span class="ne-hero-tag">{{ __('site.home_featured') }}{{ $leadCategoryName !== '' ? ' · '.$leadCategoryName : '' }}</span>
                 </div>
             </section>

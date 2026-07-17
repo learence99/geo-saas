@@ -44,6 +44,9 @@
         'task_name' => (string) ($articleForm['task_name'] ?? ''),
         'is_hot' => old('is_hot', !empty($articleForm['is_hot']) ? '1' : '0'),
         'is_featured' => old('is_featured', !empty($articleForm['is_featured']) ? '1' : '0'),
+        'cover_image_url' => (string) ($articleForm['cover_image_url'] ?? ''),
+        'cover_image_credit_name' => (string) ($articleForm['cover_image_credit_name'] ?? ''),
+        'cover_image_credit_url' => (string) ($articleForm['cover_image_credit_url'] ?? ''),
     ];
     $qualityChecks = [
         'has_title' => trim((string) $formData['title']) !== '',
@@ -454,6 +457,39 @@
                             </div>
                         </div>
                     </div>
+
+                    @if($isEdit)
+                        <div class="bg-white shadow rounded-lg">
+                            <div class="px-6 py-4 border-b border-gray-200">
+                                <h3 class="text-lg font-medium text-gray-900">封面图</h3>
+                            </div>
+                            <div class="px-6 py-4 space-y-3">
+                                @error('cover_image')
+                                    <p class="text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                                @if($formData['cover_image_url'] !== '')
+                                    <img src="{{ $formData['cover_image_url'] }}" alt="" class="w-full max-w-sm rounded-lg border border-gray-200">
+                                    @if($formData['cover_image_credit_name'] !== '')
+                                        <p class="text-xs text-gray-400">
+                                            Photo by
+                                            <a href="{{ $formData['cover_image_credit_url'] }}" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-700">{{ $formData['cover_image_credit_name'] }}</a>
+                                            on Unsplash
+                                        </p>
+                                    @endif
+                                @else
+                                    <p class="text-sm text-gray-500">还没有封面图。</p>
+                                @endif
+                                <form method="POST" action="{{ route('admin.articles.cover-image', ['articleId' => (int) $articleId]) }}">
+                                    @csrf
+                                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                        <i data-lucide="image" class="w-4 h-4 mr-2"></i>
+                                        {{ $formData['cover_image_url'] !== '' ? '重新获取 Unsplash 封面图' : '获取 Unsplash 封面图' }}
+                                    </button>
+                                </form>
+                                <p class="text-xs text-gray-500">按文章分类自动检索一张 Unsplash 图片作为封面，免费商用授权。</p>
+                            </div>
+                        </div>
+                    @endif
 
                     <div class="bg-white shadow rounded-lg">
                         <div class="px-6 py-4 border-b border-gray-200">

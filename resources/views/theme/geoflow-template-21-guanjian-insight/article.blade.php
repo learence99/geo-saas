@@ -65,6 +65,19 @@
                     <span>{{ (int) $article->view_count }} views</span>
                 </div>
 
+                @if($article->cover_image_url)
+                    <figure class="ne-article-cover">
+                        <img src="{{ $article->cover_image_url }}" alt="{{ $article->title }}" loading="lazy">
+                        @if($article->cover_image_credit_name)
+                            <figcaption>
+                                Photo by
+                                <a href="{{ $article->cover_image_credit_url }}" target="_blank" rel="noopener">{{ $article->cover_image_credit_name }}</a>
+                                on Unsplash
+                            </figcaption>
+                        @endif
+                    </figure>
+                @endif
+
                 @if($excerptPlain !== '')
                     <p class="ne-article-excerpt">{{ $excerptPlain }}</p>
                 @endif
