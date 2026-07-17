@@ -50,7 +50,7 @@
                     <fieldset class="rounded-lg border border-gray-200 bg-gray-50 p-4">
                         <legend class="text-sm font-medium text-gray-900">{{ __('admin.distribution.field.channel_type') }}</legend>
                         <p class="mt-1 text-sm text-gray-600">{{ __('admin.distribution.help.channel_type') }}</p>
-                        <div class="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-3">
+                        <div class="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-4">
                             <label class="flex cursor-pointer gap-3 rounded-md border border-gray-200 bg-white p-4 hover:border-blue-300">
                                 <input type="radio" name="channel_type" value="geoflow_agent" class="mt-1 text-blue-600 focus:ring-blue-500" @checked($channelType === 'geoflow_agent')>
                                 <span>
@@ -70,6 +70,13 @@
                                 <span>
                                     <span class="block text-sm font-semibold text-gray-900">{{ __('admin.distribution.channel_type.generic_http_api') }}</span>
                                     <span class="mt-1 block text-sm text-gray-600">{{ __('admin.distribution.channel_type.generic_http_api_desc') }}</span>
+                                </span>
+                            </label>
+                            <label class="flex cursor-pointer gap-3 rounded-md border border-gray-200 bg-white p-4 hover:border-blue-300">
+                                <input type="radio" name="channel_type" value="shopify" class="mt-1 text-blue-600 focus:ring-blue-500" @checked($channelType === 'shopify')>
+                                <span>
+                                    <span class="block text-sm font-semibold text-gray-900">{{ __('admin.distribution.channel_type.shopify') }}</span>
+                                    <span class="mt-1 block text-sm text-gray-600">{{ __('admin.distribution.channel_type.shopify_desc') }}</span>
                                 </span>
                             </label>
                         </div>
@@ -230,6 +237,46 @@
                                 <input id="generic_remote_url_path" name="generic_remote_url_path" type="text" value="{{ old('generic_remote_url_path', 'url') }}" class="mt-1 block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="data.url">
                             </div>
                         </div>
+                    </div>
+
+                    <div data-channel-type-panel="shopify" @class(['rounded-lg border border-green-100 bg-green-50 p-5', 'hidden' => $channelType !== 'shopify'])>
+                        <div class="mb-5">
+                            <h2 class="text-lg font-medium text-gray-900">{{ __('admin.distribution.shopify.section_title') }}</h2>
+                            <p class="mt-1 text-sm leading-6 text-gray-600">{{ __('admin.distribution.shopify.section_desc') }}</p>
+                        </div>
+                        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <div>
+                                <label for="shopify_blog_id" class="block text-sm font-medium text-gray-700">{{ __('admin.distribution.shopify.blog_id') }} *</label>
+                                <input id="shopify_blog_id" name="shopify_blog_id" type="text" value="{{ old('shopify_blog_id') }}" class="mt-1 block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="123456789">
+                                <p class="mt-1 text-xs text-gray-500">{{ __('admin.distribution.shopify.blog_id_help') }}</p>
+                            </div>
+                            <div>
+                                <label for="shopify_access_token" class="block text-sm font-medium text-gray-700">{{ __('admin.distribution.shopify.access_token') }}</label>
+                                <input id="shopify_access_token" name="shopify_access_token" type="password" value="{{ old('shopify_access_token') }}" class="mt-1 block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500" autocomplete="new-password">
+                                <p class="mt-1 text-xs text-gray-500">{{ __('admin.distribution.shopify.access_token_help') }}</p>
+                            </div>
+                        </div>
+                        <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+                            <div>
+                                <label for="shopify_post_status" class="block text-sm font-medium text-gray-700">{{ __('admin.distribution.shopify.post_status') }}</label>
+                                <select id="shopify_post_status" name="shopify_post_status" class="mt-1 block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="published" @selected(old('shopify_post_status', 'draft') === 'published')>{{ __('admin.distribution.shopify.post_status_published') }}</option>
+                                    <option value="draft" @selected(old('shopify_post_status', 'draft') === 'draft')>{{ __('admin.distribution.shopify.post_status_draft') }}</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="shopify_tag_strategy" class="block text-sm font-medium text-gray-700">{{ __('admin.distribution.shopify.tag_strategy') }}</label>
+                                <select id="shopify_tag_strategy" name="shopify_tag_strategy" class="mt-1 block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="keywords_to_tags" @selected(old('shopify_tag_strategy', 'keywords_to_tags') === 'keywords_to_tags')>{{ __('admin.distribution.shopify.tag_keywords_to_tags') }}</option>
+                                    <option value="disabled" @selected(old('shopify_tag_strategy') === 'disabled')>{{ __('admin.distribution.shopify.tag_disabled') }}</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="shopify_api_version" class="block text-sm font-medium text-gray-700">{{ __('admin.distribution.shopify.api_version') }}</label>
+                                <input id="shopify_api_version" name="shopify_api_version" type="text" value="{{ old('shopify_api_version', '2024-10') }}" class="mt-1 block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="2024-10">
+                            </div>
+                        </div>
+                        <p class="mt-4 text-xs text-gray-500">{{ __('admin.distribution.shopify.endpoint_hint') }}</p>
                     </div>
 
                     <div data-channel-type-panel="geoflow_agent" @class(['space-y-6', 'hidden' => $channelType !== 'geoflow_agent'])>

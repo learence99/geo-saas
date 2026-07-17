@@ -11,6 +11,7 @@
     $channelTypeLabel = __('admin.distribution.channel_type.'.$channelType);
     $channelConfig = $channel->resolvedChannelConfig();
     $genericConfig = $channel->resolvedGenericHttpConfig();
+    $shopifyConfig = $channel->resolvedShopifyConfig();
     $articleTextAdPolicy = \App\Models\DistributionChannel::normalizeArticleTextAdPolicy($articleTextAdPolicy ?? $channel->resolvedArticleTextAdPolicy());
     $effectiveArticleTextAds = is_array($effectiveArticleTextAds ?? null) ? $effectiveArticleTextAds : $channel->effectiveArticleTextAds();
     $frontendExperienceReport = is_array($frontendExperienceReport ?? null) ? $frontendExperienceReport : [];
@@ -55,6 +56,8 @@
     } elseif ($channel->isGenericHttpApi()) {
         $genericHealthPath = strtr((string) $genericConfig['generic_health_path'], ['{channel_id}' => (string) $channel->id]);
         $healthCheckUrl = rtrim((string) $channel->endpoint_url, '/').(str_starts_with($genericHealthPath, '/') ? $genericHealthPath : '/'.$genericHealthPath);
+    } elseif ($channel->isShopify()) {
+        $healthCheckUrl = $channel->shopifyApiBaseUrl().'/shop.json';
     }
     $indexAgentBaseUrl = str_ends_with(rtrim((string) $channel->endpoint_url, '/'), '/index.php') ? rtrim((string) $channel->endpoint_url, '/') : rtrim((string) $channel->endpoint_url, '/').'/index.php';
     $indexHealthCheckUrl = $indexAgentBaseUrl.'/geoflow-agent/v1/health';
@@ -177,6 +180,15 @@
                             <dt class="text-gray-500">{{ __('admin.distribution.generic.publish_endpoint') }}</dt>
                             <dd class="mt-1 break-all font-mono text-sm text-gray-900">{{ $genericConfig['generic_publish_method'] }} {{ $genericConfig['generic_publish_path'] }}</dd>
                         </div>
+                    @elseif ($channel->isShopify())
+                        <div>
+                            <dt class="text-gray-500">{{ __('admin.distribution.shopify.blog_id') }}</dt>
+                            <dd class="mt-1 font-medium text-gray-900">{{ $shopifyConfig['shopify_blog_id'] ?: __('admin.common.none') }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-gray-500">{{ __('admin.distribution.shopify.post_status') }}</dt>
+                            <dd class="mt-1 font-medium text-gray-900">{{ __('admin.distribution.shopify.post_status_'.$shopifyConfig['shopify_post_status']) }}</dd>
+                        </div>
                     @endif
                     <div>
                         <dt class="text-gray-500">{{ __('admin.distribution.field.health_status') }}</dt>
@@ -205,6 +217,10 @@
                     @if ($channel->isWordPressRest())
                         <div class="mt-5 rounded-md border border-blue-100 bg-blue-50 px-3 py-3 text-sm leading-6 text-blue-900">
                             {{ __('admin.distribution.wordpress.secret_hint') }}
+                        </div>
+                    @elseif ($channel->isShopify())
+                        <div class="mt-5 rounded-md border border-green-100 bg-green-50 px-3 py-3 text-sm leading-6 text-green-900">
+                            {{ __('admin.distribution.shopify.secret_hint') }}
                         </div>
                     @elseif ($canRevealSecret)
                         <form method="POST" action="{{ route('admin.distribution.reveal-secret', ['channelId' => (int) $channel->id]) }}" class="mt-5 border-t border-gray-200 pt-5">

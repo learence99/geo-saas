@@ -48,6 +48,18 @@ class ArticleDistribution extends Model
         return is_numeric($postId) ? (int) $postId : null;
     }
 
+    public function shopifyArticleId(): ?int
+    {
+        if ($this->remote_id !== null && ctype_digit((string) $this->remote_id)) {
+            return (int) $this->remote_id;
+        }
+
+        $meta = is_array($this->remote_meta) ? $this->remote_meta : [];
+        $articleId = $meta['shopify_article_id'] ?? null;
+
+        return is_numeric($articleId) ? (int) $articleId : null;
+    }
+
     public function article(): BelongsTo
     {
         return $this->belongsTo(Article::class, 'article_id');

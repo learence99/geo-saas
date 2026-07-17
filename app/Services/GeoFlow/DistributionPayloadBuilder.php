@@ -75,11 +75,11 @@ class DistributionPayloadBuilder
     private function heroImageUrl(Article $article): string
     {
         $image = $article->articleImages->sortBy('position')->first()?->image;
-        if (! $image) {
-            return '';
+        if ($image) {
+            return ImageUrlNormalizer::toPublicUrl((string) ($image->file_path ?? ''));
         }
 
-        return ImageUrlNormalizer::toPublicUrl((string) ($image->file_path ?? ''));
+        return (string) ($article->cover_image_url ?? '');
     }
 
     /**

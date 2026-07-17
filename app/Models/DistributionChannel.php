@@ -413,7 +413,7 @@ class DistributionChannel extends Model
     {
         $type = (string) ($this->channel_type ?? 'geoflow_agent');
 
-        return in_array($type, ['geoflow_agent', 'wordpress_rest', 'generic_http_api'], true) ? $type : 'geoflow_agent';
+        return in_array($type, ['geoflow_agent', 'wordpress_rest', 'generic_http_api', 'shopify'], true) ? $type : 'geoflow_agent';
     }
 
     public function isGeoFlowAgent(): bool
@@ -429,6 +429,11 @@ class DistributionChannel extends Model
     public function isGenericHttpApi(): bool
     {
         return $this->channelType() === 'generic_http_api';
+    }
+
+    public function isShopify(): bool
+    {
+        return $this->channelType() === 'shopify';
     }
 
     /**
@@ -740,6 +745,39 @@ class DistributionChannel extends Model
         $base = rtrim((string) $this->endpoint_url, '/');
 
         return str_ends_with($base, '/wp-json') ? $base : $base.'/wp-json';
+    }
+
+    /**
+     * @return array{
+     *   shopify_blog_id:string,
+     *   shopify_api_version:string,
+     *   shopify_post_status:string,
+     *   shopify_tag_strategy:string
+     * }
+     */
+    public function resolvedShopifyConfig(): array
+    {
+        $stored = is_array($this->channel_config) ? $this->channel_config : [];
+        $postStatus = (string) ($stored['shopify_post_status'] ?? 'published');
+        $tagStrategy = (string) ($stored['shopify_tag_strategy'] ?? 'keywords_to_tags');
+
+        return [
+            'shopify_blog_id' => trim((string) ($stored['shopify_blog_id'] ?? '')),
+            'shopify_api_version' => trim((string) ($stored['shopify_api_version'] ?? '')) ?: '2024-10',
+            'shopify_post_status' => in_array($postStatus, ['published', 'draft'], true) ? $postStatus : 'published',
+            'shopify_tag_strategy' => in_array($tagStrategy, ['keywords_to_tags', 'disabled'], true) ? $tagStrategy : 'keywords_to_tags',
+        ];
+    }
+
+    /**
+     * Shopify Admin API 基础地址，例如 https://{shop}.myshopify.com/admin/api/{version}。
+     */
+    public function shopifyApiBaseUrl(): string
+    {
+        $base = rtrim((string) $this->endpoint_url, '/');
+        $version = $this->resolvedShopifyConfig()['shopify_api_version'];
+
+        return $base.'/admin/api/'.$version;
     }
 
     public function secrets(): HasMany

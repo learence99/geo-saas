@@ -131,6 +131,14 @@ class DistributionController extends Controller
                 ->with('message', __('admin.distribution.message.created'));
         }
 
+        if ($channel->isShopify()) {
+            $this->createShopifySecret($channel, (string) $payload['shopify_access_token']);
+
+            return redirect()
+                ->route('admin.distribution.show', ['channelId' => (int) $channel->id])
+                ->with('message', __('admin.distribution.message.created'));
+        }
+
         $secret = $this->createChannelSecret($channel);
 
         return redirect()
@@ -209,6 +217,13 @@ class DistributionController extends Controller
                 ->where('status', 'active')
                 ->update(['status' => 'revoked']);
             $this->createWordPressSecret($channel, (string) $payload['wordpress_application_password']);
+        }
+        if ($channel->isShopify() && filled($payload['shopify_access_token'] ?? null)) {
+            DistributionChannelSecret::query()
+                ->where('distribution_channel_id', (int) $channel->id)
+                ->where('status', 'active')
+                ->update(['status' => 'revoked']);
+            $this->createShopifySecret($channel, (string) $payload['shopify_access_token']);
         }
         if ($channel->isGenericHttpApi()) {
             $genericAuthType = $channel->resolvedGenericHttpConfig()['generic_auth_type'];
@@ -947,11 +962,16 @@ class DistributionController extends Controller
             'name' => ['required', 'string', 'max:120'],
             'domain' => ['required', 'string', 'max:255'],
             'endpoint_url' => ['required', 'string', 'max:500'],
-            'channel_type' => ['nullable', 'string', 'in:geoflow_agent,wordpress_rest,generic_http_api'],
+            'channel_type' => ['nullable', 'string', 'in:geoflow_agent,wordpress_rest,generic_http_api,shopify'],
             'front_mode' => ['nullable', 'string', 'in:static,rewrite'],
             'template_key' => ['nullable', 'string', 'max:120'],
             'status' => ['required', 'string', 'in:active,paused'],
             'description' => ['nullable', 'string', 'max:1000'],
+            'shopify_access_token' => ['nullable', 'string', 'max:255'],
+            'shopify_blog_id' => ['nullable', 'string', 'max:50'],
+            'shopify_api_version' => ['nullable', 'string', 'max:20'],
+            'shopify_post_status' => ['nullable', 'string', 'in:published,draft'],
+            'shopify_tag_strategy' => ['nullable', 'string', 'in:keywords_to_tags,disabled'],
             'wordpress_username' => ['nullable', 'string', 'max:120'],
             'wordpress_application_password' => ['nullable', 'string', 'max:255'],
             'wordpress_post_status' => ['nullable', 'string', 'in:publish,draft,pending,private'],
@@ -1024,6 +1044,18 @@ class DistributionController extends Controller
             throw ValidationException::withMessages([
                 'endpoint_url' => __('admin.distribution.validation.endpoint_url'),
             ]);
+        }
+        if ($payload['channel_type'] === 'shopify') {
+            if (! filled($payload['shopify_blog_id'] ?? null)) {
+                throw ValidationException::withMessages([
+                    'shopify_blog_id' => __('admin.distribution.validation.shopify_blog_id'),
+                ]);
+            }
+            if ($request->isMethod('post') && ! filled($payload['shopify_access_token'] ?? null)) {
+                throw ValidationException::withMessages([
+                    'shopify_access_token' => __('admin.distribution.validation.shopify_access_token'),
+                ]);
+            }
         }
         if ($payload['channel_type'] === 'wordpress_rest') {
             if (! filled($payload['wordpress_username'] ?? null)) {
@@ -1412,6 +1444,19 @@ class DistributionController extends Controller
             ], $channel);
         }
 
+        if ($channelType === 'shopify') {
+            $defaults = $channel?->resolvedShopifyConfig() ?? (new DistributionChannel)->resolvedShopifyConfig();
+
+            return $this->withExistingFrontendCapabilitiesCache([
+                'article_text_ad_policy' => $articleTextAdPolicy,
+                'frontend_experience_mode' => $frontendExperienceMode,
+                'shopify_blog_id' => trim((string) ($payload['shopify_blog_id'] ?? $defaults['shopify_blog_id'])),
+                'shopify_api_version' => trim((string) ($payload['shopify_api_version'] ?? $defaults['shopify_api_version'])),
+                'shopify_post_status' => (string) ($payload['shopify_post_status'] ?? $defaults['shopify_post_status']),
+                'shopify_tag_strategy' => (string) ($payload['shopify_tag_strategy'] ?? $defaults['shopify_tag_strategy']),
+            ], $channel);
+        }
+
         if ($channelType !== 'wordpress_rest') {
             return $this->withExistingFrontendCapabilitiesCache([
                 'article_text_ad_policy' => $articleTextAdPolicy,
@@ -1515,6 +1560,17 @@ class DistributionController extends Controller
             'secret_ciphertext' => $this->apiKeyCrypto->encrypt($secret),
             'status' => 'active',
             'scopes' => ['generic.http'],
+        ]);
+    }
+
+    private function createShopifySecret(DistributionChannel $channel, string $accessToken): void
+    {
+        DistributionChannelSecret::query()->create([
+            'distribution_channel_id' => (int) $channel->id,
+            'key_id' => 'shopify_'.Str::lower(Str::random(18)),
+            'secret_ciphertext' => $this->apiKeyCrypto->encrypt($accessToken),
+            'status' => 'active',
+            'scopes' => ['shopify.admin_api'],
         ]);
     }
 
