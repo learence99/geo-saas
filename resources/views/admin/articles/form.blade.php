@@ -45,6 +45,7 @@
         'is_hot' => old('is_hot', !empty($articleForm['is_hot']) ? '1' : '0'),
         'is_featured' => old('is_featured', !empty($articleForm['is_featured']) ? '1' : '0'),
         'cover_image_url' => (string) ($articleForm['cover_image_url'] ?? ''),
+        'cover_image_source' => (string) ($articleForm['cover_image_source'] ?? ''),
         'cover_image_credit_name' => (string) ($articleForm['cover_image_credit_name'] ?? ''),
         'cover_image_credit_url' => (string) ($articleForm['cover_image_credit_url'] ?? ''),
     ];
@@ -469,7 +470,9 @@
                                 @enderror
                                 @if($formData['cover_image_url'] !== '')
                                     <img src="{{ $formData['cover_image_url'] }}" alt="" class="w-full max-w-sm rounded-lg border border-gray-200">
-                                    @if($formData['cover_image_credit_name'] !== '')
+                                    @if($formData['cover_image_source'] === 'openai')
+                                        <p class="text-xs text-gray-400">AI 生成（OpenAI gpt-image-1）</p>
+                                    @elseif($formData['cover_image_credit_name'] !== '')
                                         <p class="text-xs text-gray-400">
                                             Photo by
                                             <a href="{{ $formData['cover_image_credit_url'] }}" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-700">{{ $formData['cover_image_credit_name'] }}</a>
@@ -483,10 +486,10 @@
                                     @csrf
                                     <button type="submit" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                                         <i data-lucide="image" class="w-4 h-4 mr-2"></i>
-                                        {{ $formData['cover_image_url'] !== '' ? '重新获取 Unsplash 封面图' : '获取 Unsplash 封面图' }}
+                                        {{ $formData['cover_image_url'] !== '' ? '重新获取封面图' : '获取封面图' }}
                                     </button>
                                 </form>
-                                <p class="text-xs text-gray-500">按文章分类自动检索一张 Unsplash 图片作为封面，免费商用授权。</p>
+                                <p class="text-xs text-gray-500">优先按文章分类从 Unsplash 检索真实照片；找不到时自动改用 OpenAI 生成一张。</p>
                             </div>
                         </div>
                     @endif

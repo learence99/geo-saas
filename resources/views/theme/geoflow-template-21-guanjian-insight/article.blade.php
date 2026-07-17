@@ -68,7 +68,9 @@
                 @if($article->cover_image_url)
                     <figure class="ne-article-cover">
                         <img src="{{ $article->cover_image_url }}" alt="{{ $article->title }}" loading="lazy">
-                        @if($article->cover_image_credit_name)
+                        @if($article->cover_image_source === 'openai')
+                            <figcaption>AI 生成图片</figcaption>
+                        @elseif($article->cover_image_credit_name)
                             <figcaption>
                                 Photo by
                                 <a href="{{ $article->cover_image_credit_url }}" target="_blank" rel="noopener">{{ $article->cover_image_credit_name }}</a>
