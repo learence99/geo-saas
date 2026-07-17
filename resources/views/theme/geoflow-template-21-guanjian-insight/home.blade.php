@@ -35,7 +35,6 @@
 
 @php
     $homeArticles = is_object($articles ?? null) && method_exists($articles, 'getCollection') ? $articles->getCollection() : collect($articles ?? []);
-    $homepageHotArticles = collect($hotArticles ?? []);
     $isDefaultHome = $search === '' && !$category && !$categoryMissing;
     $leadArticle = $isDefaultHome ? ($featuredArticles->first() ?: $homeArticles->first()) : null;
     $leadSummary = $leadArticle ? trim((string) ($cardSummaries[$leadArticle->id] ?? '')) : '';
@@ -77,23 +76,6 @@
                         </div>
                     </section>
                 @endif
-                @if($homepageHotArticles->isNotEmpty())
-                    <div class="ne-hot-carousel" data-hot-carousel>
-                        @foreach($homepageHotArticles as $hotArticle)
-                            <a href="{{ route('site.article', $hotArticle->slug) }}" class="ne-breaking {{ $loop->first ? 'is-active' : '' }}" data-hot-slide>
-                                <strong>{{ __('site.home_hot_badge') }}</strong>
-                                <span>{{ $hotArticle->title }}</span>
-                            </a>
-                        @endforeach
-                        @if($homepageHotArticles->count() > 1)
-                            <div class="ne-hot-dots" aria-hidden="true">
-                                @foreach($homepageHotArticles as $hotArticle)
-                                    <button type="button" class="{{ $loop->first ? 'is-active' : '' }}" data-hot-dot></button>
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
-                @endif
             @endif
 
             @php
@@ -106,7 +88,7 @@
                     </div>
                     <div class="ne-feed">
                         @foreach($featuredListArticles as $article)
-                            @include('theme.geoflow-template-21-guanjian-insight.partials.article-card', ['article' => $article, 'showFeaturedBadge' => true])
+                            @include('theme.geoflow-template-21-guanjian-insight.partials.article-card', ['article' => $article])
                         @endforeach
                     </div>
                 </section>
