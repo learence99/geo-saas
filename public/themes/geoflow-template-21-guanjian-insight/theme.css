@@ -177,8 +177,6 @@ body.ne-body {
     order: 2;
 }
 
-.ne-home-lead-main .ne-page-kicker { margin-bottom: 14px; }
-
 .ne-home-lead-main h1 {
     font-family: var(--vj-serif);
     font-size: 32px;
@@ -222,26 +220,15 @@ body.ne-body {
     line-height: 1;
 }
 
-.ne-mini-title {
-    font-size: 11px;
-    letter-spacing: 2px;
-    color: rgba(255, 255, 255, .55);
-    text-transform: uppercase;
-    margin-bottom: 4px;
-}
-
-.ne-home-headlines a {
-    color: rgba(255, 255, 255, .92);
-    text-decoration: none;
-    font-size: 15px;
-    line-height: 1.5;
+.ne-hero-tag {
+    align-self: flex-start;
+    background: var(--vj-bg);
+    color: var(--vj-navy);
+    font-size: 12px;
     font-weight: 500;
-    padding: 8px 0;
-    border-top: 1px solid rgba(255, 255, 255, .12);
+    padding: 7px 16px;
+    border-radius: 999px;
 }
-
-.ne-home-headlines a:first-of-type { border-top: none; }
-.ne-home-headlines span { color: rgba(255, 255, 255, .6); font-size: 13px; }
 
 /* ---------- Hot carousel ---------- */
 .ne-hot-carousel { position: relative; margin-bottom: 40px; }

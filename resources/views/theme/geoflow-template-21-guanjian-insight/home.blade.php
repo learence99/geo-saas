@@ -39,9 +39,6 @@
     $isDefaultHome = $search === '' && !$category && !$categoryMissing;
     $leadArticle = $isDefaultHome ? ($featuredArticles->first() ?: $homeArticles->first()) : null;
     $leadSummary = $leadArticle ? trim((string) ($cardSummaries[$leadArticle->id] ?? '')) : '';
-    $headlineArticles = $isDefaultHome
-        ? collect($featuredArticles)->concat($homeArticles)->filter()->unique(fn ($item) => $item->id)->reject(fn ($item) => $leadArticle && $item->id === $leadArticle->id)->take(5)
-        : collect();
 @endphp
     <div class="ne-shell ne-layout">
         <section class="ne-feed">
@@ -61,7 +58,6 @@
                 @if($leadArticle)
                     <section class="ne-home-lead">
                         <div class="ne-home-lead-main">
-                            <div class="ne-page-kicker">{{ $siteSubtitle !== '' ? $siteSubtitle : $siteTitle }}</div>
                             <h1>
                                 <a href="{{ route('site.article', $leadArticle->slug) }}">{{ $leadArticle->title }}</a>
                             </h1>
@@ -72,14 +68,12 @@
                             @endif
                             <a href="{{ route('site.article', $leadArticle->slug) }}" class="ne-card-action">{{ __('site.home_read_more') }} <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
                         </div>
-                        @php $leadCoverIndex = (int) (($leadArticle->category_id ?? $leadArticle->id) % 6); @endphp
+                        @php
+                            $leadCoverIndex = (int) (($leadArticle->category_id ?? $leadArticle->id) % 6);
+                            $leadCategoryName = $leadArticle->category?->name ?? '';
+                        @endphp
                         <div class="ne-home-headlines ne-cover-{{ $leadCoverIndex }}">
-                            <div class="ne-mini-title">{{ __('site.home_featured') }}</div>
-                            @forelse($headlineArticles as $headlineArticle)
-                                <a href="{{ route('site.article', $headlineArticle->slug) }}">{{ $headlineArticle->title }}</a>
-                            @empty
-                                <span>{{ $siteDescription !== '' ? $siteDescription : __('site.home_hero_fallback') }}</span>
-                            @endforelse
+                            <span class="ne-hero-tag">{{ __('site.home_featured') }}{{ $leadCategoryName !== '' ? ' · '.$leadCategoryName : '' }}</span>
                         </div>
                     </section>
                 @endif
