@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\GeoCitationController;
 use App\Http\Controllers\Admin\GeoFixController;
 use App\Http\Controllers\Admin\GeoPerceptionController;
 use App\Http\Controllers\Admin\GeoMonitorController;
+use App\Http\Controllers\Admin\TechnicalSeoAuditController;
 use App\Http\Controllers\Admin\ApiTokenController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\ArticleCoverImageController;
@@ -362,6 +363,14 @@ Route::prefix($adminPrefix)->name('admin.')->middleware(['admin.locale'])->group
             Route::post('/', [GeoMonitorController::class, 'store'])->name('store');
             Route::get('{geoMonitor}', [GeoMonitorController::class, 'show'])->name('show')->whereNumber('geoMonitor');
             Route::post('{geoMonitor}/delete', [GeoMonitorController::class, 'destroy'])->name('delete')->whereNumber('geoMonitor');
+        });
+
+        // 技术SEO审计（Google Lighthouse，免费技术检测，不调用 AI API）
+        Route::prefix('technical-seo-audits')->name('technical-seo-audits.')->group(function () {
+            Route::get('/', [TechnicalSeoAuditController::class, 'index'])->name('index');
+            Route::post('/', [TechnicalSeoAuditController::class, 'store'])->name('store');
+            Route::get('{technicalSeoAudit}', [TechnicalSeoAuditController::class, 'show'])->name('show')->whereNumber('technicalSeoAudit');
+            Route::post('{technicalSeoAudit}/delete', [TechnicalSeoAuditController::class, 'destroy'])->name('delete')->whereNumber('technicalSeoAudit');
         });
 
         Route::prefix('site-settings')->name('site-settings.')->group(function () {

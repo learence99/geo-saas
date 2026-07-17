@@ -5,6 +5,7 @@
         ['route' => 'admin.geo-fixes.index', 'pattern' => 'admin.geo-fixes.*', 'name' => 'GEO修复'],
         ['route' => 'admin.geo-perceptions.index', 'pattern' => 'admin.geo-perceptions.*', 'name' => 'AI认知快照'],
         ['route' => 'admin.geo-monitors.index', 'pattern' => 'admin.geo-monitors.*', 'name' => 'AI可见度监控'],
+        ['route' => 'admin.technical-seo-audits.index', 'pattern' => 'admin.technical-seo-audits.*', 'name' => '技术SEO审计'],
     ];
 @endphp
 <div class="mb-6 border-b border-gray-200">
