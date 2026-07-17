@@ -114,6 +114,6 @@
             </div>
         </section>
 
-        @include('theme.geoflow-template-21-guanjian-insight.partials.sidebar', ['showFeedPanel' => $isDefaultHome])
+        @include('theme.geoflow-template-21-guanjian-insight.partials.sidebar')
     </div>
 @endsection

@@ -343,10 +343,6 @@ body.ne-body {
 /* ---------- Sidebar ---------- */
 .ne-sidebar { display: flex; flex-direction: column; gap: 24px; }
 .ne-panel { background: #fff; border: 1px solid var(--vj-line-2); border-radius: 16px; padding: 24px; }
-.ne-feed-panel { background: linear-gradient(135deg, var(--vj-navy), var(--vj-navy-dark)); color: #fff; }
-.ne-feed-panel .ne-page-kicker { color: rgba(255, 255, 255, .55); }
-.ne-feed-panel-title { font-family: var(--vj-serif); font-size: 19px; font-weight: 600; margin: 0 0 8px; }
-.ne-feed-panel-desc { font-size: 13px; line-height: 1.7; color: rgba(255, 255, 255, .75); margin: 0; }
 
 .ne-hot-list { display: flex; flex-direction: column; }
 .ne-hot-item {
