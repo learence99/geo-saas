@@ -7,6 +7,7 @@ return [
     'home_hot' => '热门文章',
     'home_hot_badge' => '热点',
     'home_latest' => '最新文章',
+    'home_view_all' => '查看全部',
     'home_read_more' => '阅读全文',
     'home_empty_title' => '暂无文章',
     'home_empty_desc' => '请稍后再来，或从管理后台发布内容。',

@@ -82,41 +82,31 @@
             @endif
 
             @php
-                $featuredListArticles = $featuredArticles->reject(fn ($item) => $leadArticle && $item->id === $leadArticle->id)->take(5);
+                $latestListArticles = $isDefaultHome
+                    ? $homeArticles->reject(fn ($item) => $leadArticle && $item->id === $leadArticle->id)
+                    : $homeArticles;
             @endphp
-            @if($featuredListArticles->isNotEmpty() && $search === '' && !$category)
-                <section class="ne-feed-card">
-                    <div class="ne-section-title">
-                        <span class="ne-title-row">{{ __('site.home_featured') }}</span>
-                    </div>
-                    <div class="ne-feed">
-                        @foreach($featuredListArticles as $article)
-                            @include('theme.geoflow-template-21-guanjian-insight.partials.article-card', ['article' => $article])
-                        @endforeach
-                    </div>
-                </section>
-            @endif
-
-            @unless($isDefaultHome)
-                <section class="ne-feed-card">
-                    <div class="ne-section-title">
-                        <span class="ne-title-row">{{ $viewTitle }}</span>
-                    </div>
-                    <div class="ne-feed">
-                        @forelse($articles as $article)
-                            @include('theme.geoflow-template-21-guanjian-insight.partials.article-card', ['article' => $article])
-                        @empty
-                            <div class="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-gray-500">
-                                {{ __('site.home_empty_title') }}
-                            </div>
-                        @endforelse
-                    </div>
-                </section>
-
-                <div class="mt-3">
-                    {{ $articles->links() }}
+            <section class="ne-feed-card">
+                <div class="ne-section-title">
+                    <span class="ne-title-row">{{ $viewTitle }}</span>
+                    @if($isDefaultHome)
+                        <a href="{{ route('site.home') }}" class="ne-section-more">{{ __('site.home_view_all') }} <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+                    @endif
                 </div>
-            @endunless
+                <div class="ne-feed">
+                    @forelse($latestListArticles as $article)
+                        @include('theme.geoflow-template-21-guanjian-insight.partials.article-card', ['article' => $article])
+                    @empty
+                        <div class="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-gray-500">
+                            {{ __('site.home_empty_title') }}
+                        </div>
+                    @endforelse
+                </div>
+            </section>
+
+            <div class="mt-3">
+                {{ $articles->links() }}
+            </div>
         </section>
 
         @include('theme.geoflow-template-21-guanjian-insight.partials.sidebar')

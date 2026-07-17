@@ -282,6 +282,9 @@ body.ne-body {
 .ne-section-title { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 22px; border-bottom: 1px solid var(--vj-line); padding-bottom: 13px; }
 .ne-title-row { font-family: var(--vj-serif); font-size: 20px; font-weight: 600; color: var(--vj-navy); display: flex; align-items: center; gap: 9px; }
 .ne-title-row::before { content: ""; width: 4px; height: 16px; background: var(--vj-accent); border-radius: 2px; }
+.ne-section-more { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 500; color: var(--vj-accent); text-decoration: none; white-space: nowrap; }
+.ne-section-more:hover { text-decoration: underline; }
+.ne-section-more i { width: 14px; height: 14px; }
 
 .ne-feed-card { margin-bottom: 36px; }
 .ne-feed { display: flex; flex-direction: column; gap: 26px; }
