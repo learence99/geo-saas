@@ -94,24 +94,26 @@
                 </section>
             @endif
 
-            <section class="ne-feed-card">
-                <div class="ne-section-title">
-                    <span class="ne-title-row">{{ $viewTitle }}</span>
-                </div>
-                <div class="ne-feed">
-                    @forelse($articles as $article)
-                        @include('theme.geoflow-template-21-guanjian-insight.partials.article-card', ['article' => $article])
-                    @empty
-                        <div class="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-gray-500">
-                            {{ __('site.home_empty_title') }}
-                        </div>
-                    @endforelse
-                </div>
-            </section>
+            @unless($isDefaultHome)
+                <section class="ne-feed-card">
+                    <div class="ne-section-title">
+                        <span class="ne-title-row">{{ $viewTitle }}</span>
+                    </div>
+                    <div class="ne-feed">
+                        @forelse($articles as $article)
+                            @include('theme.geoflow-template-21-guanjian-insight.partials.article-card', ['article' => $article])
+                        @empty
+                            <div class="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-gray-500">
+                                {{ __('site.home_empty_title') }}
+                            </div>
+                        @endforelse
+                    </div>
+                </section>
 
-            <div class="mt-3">
-                {{ $articles->links() }}
-            </div>
+                <div class="mt-3">
+                    {{ $articles->links() }}
+                </div>
+            @endunless
         </section>
 
         @include('theme.geoflow-template-21-guanjian-insight.partials.sidebar')
