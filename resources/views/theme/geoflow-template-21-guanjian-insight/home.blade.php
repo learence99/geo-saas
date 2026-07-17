@@ -40,6 +40,29 @@
     $leadSummary = $leadArticle ? trim((string) ($cardSummaries[$leadArticle->id] ?? '')) : '';
 @endphp
     <div class="ne-shell ne-layout">
+        @if($leadArticle)
+            <section class="ne-home-lead">
+                <div class="ne-home-lead-main">
+                    <h1>
+                        <a href="{{ route('site.article', $leadArticle->slug) }}">{{ $leadArticle->title }}</a>
+                    </h1>
+                    @if($leadSummary !== '')
+                        <p>{{ $leadSummary }}</p>
+                    @elseif($siteDescription !== '')
+                        <p>{{ $siteDescription }}</p>
+                    @endif
+                    <a href="{{ route('site.article', $leadArticle->slug) }}" class="ne-card-action">{{ __('site.home_read_more') }} <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+                </div>
+                @php
+                    $leadCoverIndex = (int) (($leadArticle->category_id ?? $leadArticle->id) % 6);
+                    $leadCategoryName = $leadArticle->category?->name ?? '';
+                @endphp
+                <div class="ne-home-headlines ne-cover-{{ $leadCoverIndex }}">
+                    <span class="ne-hero-tag">{{ __('site.home_featured') }}{{ $leadCategoryName !== '' ? ' · '.$leadCategoryName : '' }}</span>
+                </div>
+            </section>
+        @endif
+
         <section class="ne-feed">
             @if($search !== '')
                 <div class="ne-page-head">
@@ -53,29 +76,6 @@
                     <h1 class="ne-page-title">{{ __('site.category_not_found') }}</h1>
                     <p class="ne-page-desc">{{ $pageDescription }}</p>
                 </div>
-            @else
-                @if($leadArticle)
-                    <section class="ne-home-lead">
-                        <div class="ne-home-lead-main">
-                            <h1>
-                                <a href="{{ route('site.article', $leadArticle->slug) }}">{{ $leadArticle->title }}</a>
-                            </h1>
-                            @if($leadSummary !== '')
-                                <p>{{ $leadSummary }}</p>
-                            @elseif($siteDescription !== '')
-                                <p>{{ $siteDescription }}</p>
-                            @endif
-                            <a href="{{ route('site.article', $leadArticle->slug) }}" class="ne-card-action">{{ __('site.home_read_more') }} <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
-                        </div>
-                        @php
-                            $leadCoverIndex = (int) (($leadArticle->category_id ?? $leadArticle->id) % 6);
-                            $leadCategoryName = $leadArticle->category?->name ?? '';
-                        @endphp
-                        <div class="ne-home-headlines ne-cover-{{ $leadCoverIndex }}">
-                            <span class="ne-hero-tag">{{ __('site.home_featured') }}{{ $leadCategoryName !== '' ? ' · '.$leadCategoryName : '' }}</span>
-                        </div>
-                    </section>
-                @endif
             @endif
 
             @php
