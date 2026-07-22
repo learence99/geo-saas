@@ -15,8 +15,7 @@ class ShopifyPublisher implements DistributionPublisherInterface
     {
         $config = $channel->resolvedShopifyConfig();
 
-        $shopResponse = $this->requestFactory->request($channel, 10)
-            ->get($channel->shopifyApiBaseUrl().'/shop.json');
+        $shopResponse = $this->send($channel, fn ($request) => $request->get($channel->shopifyApiBaseUrl().'/shop.json'), 10);
         $this->throwIfFailed($shopResponse, 'Shopify 店铺信息检测');
         $shop = $shopResponse->json('shop');
         $shop = is_array($shop) ? $shop : [];
@@ -24,8 +23,7 @@ class ShopifyPublisher implements DistributionPublisherInterface
         $blogOk = false;
         $blogName = '';
         if ($config['shopify_blog_id'] !== '') {
-            $blogResponse = $this->requestFactory->request($channel, 10)
-                ->get($channel->shopifyApiBaseUrl().'/blogs/'.$config['shopify_blog_id'].'.json');
+            $blogResponse = $this->send($channel, fn ($request) => $request->get($channel->shopifyApiBaseUrl().'/blogs/'.$config['shopify_blog_id'].'.json'), 10);
             $blogOk = ! $blogResponse->failed();
             $blog = $blogResponse->json('blog');
             $blogName = is_array($blog) ? (string) ($blog['title'] ?? '') : '';
@@ -50,10 +48,10 @@ class ShopifyPublisher implements DistributionPublisherInterface
         $config = $channel->resolvedShopifyConfig();
         $this->assertBlogConfigured($config);
 
-        $response = $this->requestFactory->request($channel)
-            ->post($channel->shopifyApiBaseUrl().'/blogs/'.$config['shopify_blog_id'].'/articles.json', [
-                'article' => $this->articlePayload($channel, $payload),
-            ]);
+        $response = $this->send($channel, fn ($request) => $request->post(
+            $channel->shopifyApiBaseUrl().'/blogs/'.$config['shopify_blog_id'].'/articles.json',
+            ['article' => $this->articlePayload($channel, $payload)]
+        ));
         $this->throwIfFailed($response, 'Shopify 文章发布');
 
         return $this->articleResult($channel, $config, $response);
@@ -71,10 +69,10 @@ class ShopifyPublisher implements DistributionPublisherInterface
             return $this->publish($distribution, $payload);
         }
 
-        $response = $this->requestFactory->request($channel)
-            ->put($channel->shopifyApiBaseUrl().'/blogs/'.$config['shopify_blog_id'].'/articles/'.$articleId.'.json', [
-                'article' => $this->articlePayload($channel, $payload),
-            ]);
+        $response = $this->send($channel, fn ($request) => $request->put(
+            $channel->shopifyApiBaseUrl().'/blogs/'.$config['shopify_blog_id'].'/articles/'.$articleId.'.json',
+            ['article' => $this->articlePayload($channel, $payload)]
+        ));
         $this->throwIfFailed($response, 'Shopify 文章更新');
 
         return $this->articleResult($channel, $config, $response);
@@ -96,8 +94,9 @@ class ShopifyPublisher implements DistributionPublisherInterface
             ];
         }
 
-        $response = $this->requestFactory->request($channel)
-            ->delete($channel->shopifyApiBaseUrl().'/blogs/'.$config['shopify_blog_id'].'/articles/'.$articleId.'.json');
+        $response = $this->send($channel, fn ($request) => $request->delete(
+            $channel->shopifyApiBaseUrl().'/blogs/'.$config['shopify_blog_id'].'/articles/'.$articleId.'.json'
+        ));
         $this->throwIfFailed($response, 'Shopify 文章删除');
 
         return [
@@ -118,6 +117,22 @@ class ShopifyPublisher implements DistributionPublisherInterface
             'skipped' => true,
             'message' => 'Shopify 渠道不支持站点设置同步，博客文章内容以外的店铺设置请直接在 Shopify 后台维护。',
         ];
+    }
+
+    /**
+     * 统一发起请求；若使用 Client Credentials Grant 的令牌已过期（Shopify 返回 401），
+     * 丢弃缓存后重试一次，避免 24 小时令牌到期窗口造成误报失败。
+     */
+    private function send(DistributionChannel $channel, callable $call, int $timeout = 30): Response
+    {
+        $response = $call($this->requestFactory->request($channel, $timeout));
+
+        if ($response->status() === 401) {
+            $this->requestFactory->forgetCachedToken($channel);
+            $response = $call($this->requestFactory->request($channel, $timeout));
+        }
+
+        return $response;
     }
 
     /**

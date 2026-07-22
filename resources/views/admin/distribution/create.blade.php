@@ -250,12 +250,50 @@
                                 <input id="shopify_blog_id" name="shopify_blog_id" type="text" value="{{ old('shopify_blog_id') }}" class="mt-1 block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="123456789">
                                 <p class="mt-1 text-xs text-gray-500">{{ __('admin.distribution.shopify.blog_id_help') }}</p>
                             </div>
+                        </div>
+
+                        @php($shopifyAuthMode = old('shopify_auth_mode', 'client_credentials'))
+                        <div class="mt-6">
+                            <span class="block text-sm font-medium text-gray-700">{{ __('admin.distribution.shopify.auth_mode') }}</span>
+                            <div class="mt-2 grid grid-cols-1 gap-3 md:grid-cols-2">
+                                <label class="flex items-start gap-2 rounded-md border border-gray-200 bg-white p-3 text-sm">
+                                    <input type="radio" name="shopify_auth_mode" value="client_credentials" class="mt-1 text-blue-600 focus:ring-blue-500" data-shopify-auth-mode @checked($shopifyAuthMode === 'client_credentials')>
+                                    <span>
+                                        <span class="block font-semibold text-gray-900">{{ __('admin.distribution.shopify.auth_mode_ccg') }}</span>
+                                        <span class="mt-0.5 block text-xs text-gray-500">{{ __('admin.distribution.shopify.auth_mode_ccg_desc') }}</span>
+                                    </span>
+                                </label>
+                                <label class="flex items-start gap-2 rounded-md border border-gray-200 bg-white p-3 text-sm">
+                                    <input type="radio" name="shopify_auth_mode" value="access_token" class="mt-1 text-blue-600 focus:ring-blue-500" data-shopify-auth-mode @checked($shopifyAuthMode === 'access_token')>
+                                    <span>
+                                        <span class="block font-semibold text-gray-900">{{ __('admin.distribution.shopify.auth_mode_token') }}</span>
+                                        <span class="mt-0.5 block text-xs text-gray-500">{{ __('admin.distribution.shopify.auth_mode_token_desc') }}</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div data-shopify-auth-panel="client_credentials" @class(['mt-6 grid grid-cols-1 gap-6 md:grid-cols-2', 'hidden' => $shopifyAuthMode !== 'client_credentials'])>
+                            <div>
+                                <label for="shopify_client_id" class="block text-sm font-medium text-gray-700">{{ __('admin.distribution.shopify.client_id') }}</label>
+                                <input id="shopify_client_id" name="shopify_client_id" type="text" value="{{ old('shopify_client_id') }}" class="mt-1 block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500" autocomplete="off">
+                                <p class="mt-1 text-xs text-gray-500">{{ __('admin.distribution.shopify.client_id_help') }}</p>
+                            </div>
+                            <div>
+                                <label for="shopify_client_secret" class="block text-sm font-medium text-gray-700">{{ __('admin.distribution.shopify.client_secret') }}</label>
+                                <input id="shopify_client_secret" name="shopify_client_secret" type="password" value="{{ old('shopify_client_secret') }}" class="mt-1 block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500" autocomplete="new-password">
+                                <p class="mt-1 text-xs text-gray-500">{{ __('admin.distribution.shopify.client_secret_help') }}</p>
+                            </div>
+                        </div>
+
+                        <div data-shopify-auth-panel="access_token" @class(['mt-6 grid grid-cols-1 gap-6 md:grid-cols-2', 'hidden' => $shopifyAuthMode !== 'access_token'])>
                             <div>
                                 <label for="shopify_access_token" class="block text-sm font-medium text-gray-700">{{ __('admin.distribution.shopify.access_token') }}</label>
                                 <input id="shopify_access_token" name="shopify_access_token" type="password" value="{{ old('shopify_access_token') }}" class="mt-1 block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500" autocomplete="new-password">
                                 <p class="mt-1 text-xs text-gray-500">{{ __('admin.distribution.shopify.access_token_help') }}</p>
                             </div>
                         </div>
+
                         <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
                             <div>
                                 <label for="shopify_post_status" class="block text-sm font-medium text-gray-700">{{ __('admin.distribution.shopify.post_status') }}</label>
@@ -382,6 +420,11 @@
             }
             if (event.target.matches('#generic_auth_type')) {
                 toggleGenericAuthFields();
+            }
+            if (event.target.matches('[data-shopify-auth-mode]')) {
+                document.querySelectorAll('[data-shopify-auth-panel]').forEach(function (panel) {
+                    panel.classList.toggle('hidden', panel.dataset.shopifyAuthPanel !== event.target.value);
+                });
             }
         });
         var themeToggle = document.querySelector('[data-distribution-theme-toggle]');

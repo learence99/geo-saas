@@ -132,7 +132,11 @@ class DistributionController extends Controller
         }
 
         if ($channel->isShopify()) {
-            $this->createShopifySecret($channel, (string) $payload['shopify_access_token']);
+            if (($payload['shopify_auth_mode'] ?? 'client_credentials') === 'access_token') {
+                $this->createShopifySecret($channel, (string) $payload['shopify_access_token']);
+            } else {
+                $this->createShopifyClientCredentialsSecret($channel, (string) $payload['shopify_client_id'], (string) $payload['shopify_client_secret']);
+            }
 
             return redirect()
                 ->route('admin.distribution.show', ['channelId' => (int) $channel->id])
@@ -218,12 +222,24 @@ class DistributionController extends Controller
                 ->update(['status' => 'revoked']);
             $this->createWordPressSecret($channel, (string) $payload['wordpress_application_password']);
         }
-        if ($channel->isShopify() && filled($payload['shopify_access_token'] ?? null)) {
-            DistributionChannelSecret::query()
-                ->where('distribution_channel_id', (int) $channel->id)
-                ->where('status', 'active')
-                ->update(['status' => 'revoked']);
-            $this->createShopifySecret($channel, (string) $payload['shopify_access_token']);
+        if ($channel->isShopify()) {
+            $shopifyAuthMode = $payload['shopify_auth_mode'] ?? 'client_credentials';
+            $shopifyCredentialsProvided = $shopifyAuthMode === 'access_token'
+                ? filled($payload['shopify_access_token'] ?? null)
+                : (filled($payload['shopify_client_id'] ?? null) && filled($payload['shopify_client_secret'] ?? null));
+
+            if ($shopifyCredentialsProvided) {
+                DistributionChannelSecret::query()
+                    ->where('distribution_channel_id', (int) $channel->id)
+                    ->where('status', 'active')
+                    ->update(['status' => 'revoked']);
+
+                if ($shopifyAuthMode === 'access_token') {
+                    $this->createShopifySecret($channel, (string) $payload['shopify_access_token']);
+                } else {
+                    $this->createShopifyClientCredentialsSecret($channel, (string) $payload['shopify_client_id'], (string) $payload['shopify_client_secret']);
+                }
+            }
         }
         if ($channel->isGenericHttpApi()) {
             $genericAuthType = $channel->resolvedGenericHttpConfig()['generic_auth_type'];
@@ -967,7 +983,10 @@ class DistributionController extends Controller
             'template_key' => ['nullable', 'string', 'max:120'],
             'status' => ['required', 'string', 'in:active,paused'],
             'description' => ['nullable', 'string', 'max:1000'],
+            'shopify_auth_mode' => ['nullable', 'string', 'in:client_credentials,access_token'],
             'shopify_access_token' => ['nullable', 'string', 'max:255'],
+            'shopify_client_id' => ['nullable', 'string', 'max:255'],
+            'shopify_client_secret' => ['nullable', 'string', 'max:255'],
             'shopify_blog_id' => ['nullable', 'string', 'max:50'],
             'shopify_api_version' => ['nullable', 'string', 'max:20'],
             'shopify_post_status' => ['nullable', 'string', 'in:published,draft'],
@@ -1051,10 +1070,21 @@ class DistributionController extends Controller
                     'shopify_blog_id' => __('admin.distribution.validation.shopify_blog_id'),
                 ]);
             }
-            if ($request->isMethod('post') && ! filled($payload['shopify_access_token'] ?? null)) {
-                throw ValidationException::withMessages([
-                    'shopify_access_token' => __('admin.distribution.validation.shopify_access_token'),
-                ]);
+            $payload['shopify_auth_mode'] = in_array($payload['shopify_auth_mode'] ?? null, ['client_credentials', 'access_token'], true)
+                ? $payload['shopify_auth_mode']
+                : 'client_credentials';
+            if ($request->isMethod('post')) {
+                if ($payload['shopify_auth_mode'] === 'client_credentials') {
+                    if (! filled($payload['shopify_client_id'] ?? null) || ! filled($payload['shopify_client_secret'] ?? null)) {
+                        throw ValidationException::withMessages([
+                            'shopify_client_id' => __('admin.distribution.validation.shopify_client_credentials'),
+                        ]);
+                    }
+                } elseif (! filled($payload['shopify_access_token'] ?? null)) {
+                    throw ValidationException::withMessages([
+                        'shopify_access_token' => __('admin.distribution.validation.shopify_access_token'),
+                    ]);
+                }
             }
         }
         if ($payload['channel_type'] === 'wordpress_rest') {
@@ -1571,6 +1601,23 @@ class DistributionController extends Controller
             'secret_ciphertext' => $this->apiKeyCrypto->encrypt($accessToken),
             'status' => 'active',
             'scopes' => ['shopify.admin_api'],
+        ]);
+    }
+
+    /**
+     * Shopify Dev Dashboard 应用发的 Client ID/Secret，走 Client Credentials Grant 换取
+     * 24 小时有效的 Admin API 令牌（详见 ShopifyRequestFactory）。key_id 字段有唯一约束，
+     * 而同一个 Shopify 应用的 Client ID 在多次轮换密钥时会重复出现，所以 key_id 仍用随机值，
+     * 明文 Client ID 改为编码进 scopes（client_id:xxx），由 ShopifyRequestFactory 解析。
+     */
+    private function createShopifyClientCredentialsSecret(DistributionChannel $channel, string $clientId, string $clientSecret): void
+    {
+        DistributionChannelSecret::query()->create([
+            'distribution_channel_id' => (int) $channel->id,
+            'key_id' => 'shopify_ccg_'.Str::lower(Str::random(18)),
+            'secret_ciphertext' => $this->apiKeyCrypto->encrypt($clientSecret),
+            'status' => 'active',
+            'scopes' => ['shopify.ccg', 'client_id:'.$clientId],
         ]);
     }
 
