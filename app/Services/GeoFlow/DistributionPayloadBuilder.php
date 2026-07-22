@@ -75,11 +75,25 @@ class DistributionPayloadBuilder
     private function heroImageUrl(Article $article): string
     {
         $image = $article->articleImages->sortBy('position')->first()?->image;
-        if ($image) {
-            return ImageUrlNormalizer::toPublicUrl((string) ($image->file_path ?? ''));
+        $rawPath = $image
+            ? (string) ($image->file_path ?? '')
+            : (string) ($article->cover_image_url ?? '');
+
+        return $this->absolutePublicUrl($rawPath);
+    }
+
+    /**
+     * ImageUrlNormalizer::toPublicUrl() 只负责补全成本站内的根相对路径（/storage/...），
+     * 站内展示够用，但发给 Shopify 这类外部平台时对方服务器无法解析相对路径，必须是完整绝对地址。
+     */
+    private function absolutePublicUrl(string $rawPath): string
+    {
+        $publicUrl = ImageUrlNormalizer::toPublicUrl($rawPath);
+        if ($publicUrl === '' || str_starts_with($publicUrl, 'http://') || str_starts_with($publicUrl, 'https://') || str_starts_with($publicUrl, 'data:')) {
+            return $publicUrl;
         }
 
-        return (string) ($article->cover_image_url ?? '');
+        return rtrim((string) config('app.url'), '/').$publicUrl;
     }
 
     /**
